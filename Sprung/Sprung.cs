@@ -24,11 +24,6 @@ namespace Sprung
         const int MOD_SHIFT = 0x0004;
         const int WM_HOTKEY = 0x0312;
 
-        /*
-         * 
-         * Initialize Jumper program.
-         * 
-         */
         public Sprung()
         {
             InitializeComponent();
@@ -37,34 +32,18 @@ namespace Sprung
             this.manager = new WindowsManager();
         }
 
-        /*
-         * 
-         * Loading the Jumper program.
-         * 
-         */
-        private void loadJumper(object sender, EventArgs e)
+        private void loadCallback(object sender, EventArgs e)
         {
             RegisterHotKey(this.Handle, 1, MOD_ALT, (int)Keys.Space);
         }
 
-        /*
-         * 
-         * Closing the application.
-         * 
-         */
-        private void exitJumper(object sender, EventArgs e)
+        private void exitCallback(object sender, EventArgs e)
         {
             UnregisterHotKey(this.Handle, 1);
             Application.Exit();
         }
 
-        /*
-         * 
-         * Search for matching processes.
-         * If field is empty, nothing happens.
-         * 
-         */
-        private void searchBoxInput(object sender, EventArgs e)
+        private void inputChangedCallback(object sender, EventArgs e)
         {
             String pattern = searchBox.Text;
             this.manager.loadProcesses();
@@ -72,11 +51,6 @@ namespace Sprung
             showMatchedProcesses(matcher.getMatchedProcesses(pattern));
         }
 
-        /*
-         * 
-         * Return the sorted process list.
-         * 
-         */
         private void showMatchedProcesses(List<Window> windows)
         {
 
@@ -116,17 +90,16 @@ namespace Sprung
             matchingBox.ReadOnly = true;
 
             for(int i = 0; i < matchingBox.Rows.Count && i < windows.Count; i++) {
-                matchingBox.Rows[i].Cells[0].Value = setIcon(windows[i].getProcess().MainModule.FileName);
+                matchingBox.Rows[i].Cells[0].Value = resizeIcon(windows[i].getProcess().MainModule.FileName);
             }
 
-            // Mark the first entry as it is (hopefully) the process the user is looking for.
             if (windows.Any())
             {
                 matchingBox.Rows[0].Selected = true;
             }
         }
 
-        private Icon setIcon(String fileName)
+        private Icon resizeIcon(String fileName)
         {
             Size iconSize = SystemInformation.SmallIconSize;
             Bitmap bitmap = new Bitmap(iconSize.Width, iconSize.Height);
@@ -141,11 +114,6 @@ namespace Sprung
             return Icon.FromHandle(bitmap.GetHicon());
         }
 
-        /*
-         * 
-         * Main method for managing messages and its functionalities.
-         * 
-         */
         protected override void WndProc(ref Message m)
         {
             if(m.Msg == WM_HOTKEY && (int)m.WParam == 1)
@@ -160,25 +128,15 @@ namespace Sprung
                 this.manager.loadProcesses();
                 showMatchedProcesses(manager.getProcesses());
             }
-
             base.WndProc(ref m);
         }
 
-        /*
-         * Import of RegisterHotKey and UnregisterHotKey
-         * Necessary for managing the controls for calling this program.
-         */
         [DllImport("user32.dll")]
         private static extern bool RegisterHotKey(IntPtr hWnd, int id, int fsModifiers, int vk);
 
         [DllImport("user32.dll")]
         private static extern bool UnregisterHotKey(IntPtr hWnd, int id);
 
-        /*
-         * 
-         * Defining the controls for key down, key up, enter and escape.
-         * 
-         */
         private void searchBoxKeyDown(object sender, KeyEventArgs e)
         {
             if (this.matchingBox.Rows.Count == 0) return;
@@ -203,10 +161,6 @@ namespace Sprung
                 this.Visible = false;
                 this.Opacity = 0;
             }
-            else
-            {
-                // Todo: Don't do anything
-            }
         }
 
 
@@ -224,6 +178,9 @@ namespace Sprung
 
         private void searchBoxKeyPress(object sender, KeyPressEventArgs e)
         {
+            // Fix so that no error sound is played when exit key is
+            // pressed while the input box is focused because for 
+            // us it's a regular action (hide window).
             if (e.KeyChar == Convert.ToChar(Keys.Enter)) e.Handled = true;
         }
     }

@@ -40,7 +40,7 @@
             this.searchBox.Name = "searchBox";
             this.searchBox.Size = new System.Drawing.Size(571, 20);
             this.searchBox.TabIndex = 1;
-            this.searchBox.TextChanged += new System.EventHandler(this.searchBoxInput);
+            this.searchBox.TextChanged += new System.EventHandler(this.inputChangedCallback);
             this.searchBox.KeyDown += new System.Windows.Forms.KeyEventHandler(this.searchBoxKeyDown);
             this.searchBox.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.searchBoxKeyPress);
             // 
@@ -65,7 +65,7 @@
             this.MaximizeBox = false;
             this.Name = "Jumper";
             this.Text = "Jumper";
-            this.Load += new System.EventHandler(this.loadJumper);
+            this.Load += new System.EventHandler(this.loadCallback);
             ((System.ComponentModel.ISupportInitialize)(this.matchingBox)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
