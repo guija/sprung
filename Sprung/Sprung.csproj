@@ -86,8 +86,8 @@
       <DependentUpon>Sprung.cs</DependentUpon>
     </Compile>
     <Compile Include="Window.cs" />
-    <Compile Include="WindowsManager.cs" />
-    <Compile Include="WindowsMatcher.cs" />
+    <Compile Include="WindowManager.cs" />
+    <Compile Include="WindowMatcher.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SystemTray.cs" />

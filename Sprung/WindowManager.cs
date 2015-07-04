@@ -8,14 +8,18 @@ using System.Windows.Forms;
 
 namespace Sprung
 {
-    class WindowsManager
+    class WindowManager
     {
         private const int MAX_CHARS_TITLE = 255;
 
         private List<Window> windows = new List<Window>();
 
         // Contains the processes which should not be listed as a result
-        private List<String> eProcesses = new List<String>() { "", "Jumper", "Program Manager" };
+        private List<String> eProcesses = new List<String>() { 
+            "", 
+            "Jumper", 
+            "Program Manager" 
+        };
 
         public void loadProcesses()
         {
@@ -30,6 +34,7 @@ namespace Sprung
 
         public List<Window> getProcesses()
         {
+            loadProcesses();
             return windows;
         }
 

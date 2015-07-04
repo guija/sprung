@@ -5,17 +5,19 @@ using System.Text;
 
 namespace Sprung
 {
-    class WindowsMatcher
+    class WindowMatcher
     {
-        private List<Window> windows;
+        private WindowManager windowManager = null;
 
-        public WindowsMatcher(List<Window> processes)
+        public WindowMatcher(WindowManager windowManager)
         {
-            this.windows = new List<Window>(processes);
+            this.windowManager = windowManager;
         }
+
         public List<Window> getMatchedProcesses(String pattern)
         {
-            foreach (Window window in windows)
+            List<Window> windows = new List<Window>();
+            foreach (Window window in this.windowManager.getProcesses())
             {
                 String title = window.getProcessTitle().ToLower();
                 pattern = pattern.ToLower();
@@ -43,9 +45,9 @@ namespace Sprung
                         lastMatched = false;
                     }
                 }
-
                 window.setMatchingPriority(matchingChars);
                 window.setMatchingGroups(matchingGroups);
+                windows.Add(window);
             }
 
             windows.Sort();

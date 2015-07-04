@@ -14,10 +14,9 @@ namespace Sprung
     public partial class Sprung : Form
     {
 
-        private List<Window> windows = null;
-        private WindowsManager manager = null;
-        private WindowsMatcher matcher = null;
+        private WindowManager windowManager = null;
         private SystemTray tray = null;
+        private WindowMatcher windowMatcher = null;
 
         const int MOD_ALT = 0x0001;
         const int MOD_CONTROL = 0x0002;
@@ -28,8 +27,8 @@ namespace Sprung
         {
             InitializeComponent();
             this.tray = new SystemTray();
-            this.windows = new List<Window>();
-            this.manager = new WindowsManager();
+            this.windowManager = new WindowManager();
+            this.windowMatcher = new WindowMatcher(this.windowManager);
         }
 
         private void loadCallback(object sender, EventArgs e)
@@ -46,16 +45,13 @@ namespace Sprung
         private void inputChangedCallback(object sender, EventArgs e)
         {
             String pattern = searchBox.Text;
-            this.manager.loadProcesses();
-            this.matcher = new WindowsMatcher(manager.getProcesses());
-            showMatchedProcesses(matcher.getMatchedProcesses(pattern));
+            showProcesses(windowMatcher.getMatchedProcesses(pattern));
         }
 
-        private void showMatchedProcesses(List<Window> windows)
+        private void showProcesses(List<Window> windows)
         {
 
             matchingBox.Columns.Clear();
-            this.windows = windows;
 
             matchingBox.AutoGenerateColumns = false;
             var imageCol = new DataGridViewImageColumn();
@@ -121,12 +117,12 @@ namespace Sprung
                 this.Visible = true;
                 this.Opacity = 100;
                 this.CenterToScreen();
-                this.manager.forceWindowToFront(this.Handle);
+                this.windowManager.forceWindowToFront(this.Handle);
                 this.Activate();
                 this.searchBox.Focus();
                 this.searchBox.Text = "";
-                this.manager.loadProcesses();
-                showMatchedProcesses(manager.getProcesses());
+                this.windowManager.loadProcesses();
+                showProcesses(windowManager.getProcesses());
             }
             base.WndProc(ref m);
         }
@@ -169,10 +165,11 @@ namespace Sprung
             if (this.matchingBox.Rows.Count > 0)
             {
                 //int selected = this.matchingBox.SelectedIndex;
-                Window window = windows.ElementAt(0);
+                // this is only to test, the real selected window has to be chose
+                Window window = windowManager.getProcesses()[0];
                 this.Visible = false;
                 this.Opacity = 0;
-                this.manager.sendWindowToFront(window);
+                this.windowManager.sendWindowToFront(window);
             }
         }
 
