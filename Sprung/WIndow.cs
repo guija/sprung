@@ -5,26 +5,19 @@ using System.Text;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 
-namespace Jumper
+namespace Sprung
 {
     class Window : IComparable<Window>
     {
 
-        IntPtr adress;
-        String processName;
-        String processTitle;
-        Process process;
-
+        private IntPtr adress;
+        private String processName;
+        private String processTitle;
+        private Process process;
 
         int matchingPriority;
         int matchingGroups;
 
-        /*
-         * 
-         * Class for holding current process information.
-         * ToDo: Need to save a pointer for adress of current process.
-         * 
-         */
         public Window(IntPtr adress, String processTitle)
         {
             if (adress.Equals(IntPtr.Zero) || processTitle == "")
@@ -41,111 +34,56 @@ namespace Jumper
             }
         }
 
-        /*
-         * 
-         * Get current process adress.
-         * 
-         */
         public IntPtr getAdress()
         {
             return this.adress;
         }
 
-        /*
-         * 
-         * Get current process name.
-         * 
-         */
         public String getProcessName()
         {
             return this.processName;
         }
 
-        /*
-         * 
-         * Get current process title.
-         * The process title is the test showed in the title bar of an application.
-         * 
-         */
         public String getProcessTitle()
         {
             return this.processTitle;
         }
 
-        // sekunde :D
-        // ich glaub in c sharp gibts ne geile moeglichkeit fuer get und set methoden! google des mal bit
-        // meinst du das hier:
-        // das muss glaub ich oben bei der variablendeklaratio hin
         public Process getProcess()
         {
             return this.process;
         }
 
-        /*
-         * 
-         * Get the current Process ID from the window / process located at the specific adress.
-         * 
-         */
+
         public Int32 getWindowProcessId(Int32 adress)
         {
             Int32 pointer = 1;
             GetWindowThreadProcessId(adress, out pointer);
             return pointer;
         }
-        
-        /*
-         * 
-         * Returns the amount of matching chars (priority) with the given pattern.
-         * 
-         */
+      
         public int getMatchingPriority()
         {
             return this.matchingPriority;
         }
 
-        /*
-         * 
-         * Set the matching priority (amount of matching chars).
-         * 
-         */
         public void setMatchingPriority(int matchingPriority)
         {
             this.matchingPriority = matchingPriority;
         }
 
-        /*
-         * 
-         * Get the amount of matching character groups.
-         * 
-         */
         public int getMatchingGroups()
         {
             return this.matchingGroups;
         }
 
-        /*
-         * 
-         * Return the amount of matching groups.
-         * 
-         */
         public void setMatchingGroups(int matchingGroups)
         {
             this.matchingGroups = matchingGroups;
         }
 
-        /*
-         * 
-         * With the IComparable interface, we're allowed to compare this object with another object of the same class (Process).
-         * Returns 1 when this object needs to be located behind the other object in a list.
-         * Returns -1 when this object needs to be located before the other object.
-         * Returns 0 when this object has the same priority as the other object.
-         * 
-         */
         public int CompareTo(Window other)
         {
-            /*
-             * Comparing the two objects by checking the amount of matching characters from the input given by the user.
-             */
             return (getMatchingPriority() < other.getMatchingPriority()) ? 1 : (getMatchingPriority() > other.getMatchingPriority()) ? -1 :
                 (getMatchingGroups() < other.getMatchingGroups()) ? -1 : (getMatchingGroups() > other.getMatchingGroups()) ? 1 : 0;
         }

@@ -4,9 +4,9 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
-using Jumper.Properties;
+using Sprung.Properties;
 
-namespace Jumper
+namespace Sprung
 {
     class SystemTray
     {
@@ -38,17 +38,12 @@ namespace Jumper
             cms.Items.Add(options);
             cms.Items.Add(exit);
 
-            exit.Click += new EventHandler(exitJumper);
+            exit.Click += new EventHandler(this.exit);
 
             symbol.ContextMenuStrip = cms;
         }
 
-        /*
-         * 
-         * Closing the application.
-         * 
-         */
-        private void exitJumper(object sender, EventArgs e)
+        private void exit(object sender, EventArgs e)
         {
             Application.Exit();
         }

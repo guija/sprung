@@ -4,15 +4,10 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace Jumper
+namespace Sprung
 {
     static class Program
     {
-        /*
-         * 
-         * Entry point for this application.
-         * 
-         */
         [STAThread]
         static void Main()
         {

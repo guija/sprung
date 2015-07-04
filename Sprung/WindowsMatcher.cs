@@ -3,11 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Jumper
+namespace Sprung
 {
     class WindowsMatcher
     {
-
         private List<Window> windows;
 
         public WindowsMatcher(List<Window> processes)
@@ -49,7 +48,6 @@ namespace Jumper
                 window.setMatchingGroups(matchingGroups);
             }
 
-            // sort
             windows.Sort();
             return windows;
         }

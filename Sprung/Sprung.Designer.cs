@@ -1,4 +1,4 @@
-﻿namespace Jumper
+﻿namespace Sprung
 {
     partial class Sprung
     {

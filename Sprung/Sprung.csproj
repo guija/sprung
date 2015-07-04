@@ -7,7 +7,7 @@
     <ProjectGuid>{7249A4ED-3C99-49FC-9144-92F2AFEB5252}</ProjectGuid>
     <OutputType>WinExe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Jumper</RootNamespace>
+    <RootNamespace>Sprung</RootNamespace>
     <AssemblyName>Jumper</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
