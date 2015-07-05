@@ -50,48 +50,14 @@ namespace Sprung
 
         private void showProcesses(List<Window> windows)
         {
-
-            matchingBox.Columns.Clear();
-
-            matchingBox.AutoGenerateColumns = false;
-            var imageCol = new DataGridViewImageColumn();
-            var titleCol = new DataGridViewTextBoxColumn();
-
-            imageCol.DataPropertyName = "";
-            titleCol.DataPropertyName = "Title";
-
-            matchingBox.Columns.Add(imageCol);
-            matchingBox.Columns.Add(titleCol);
-
-            var dt = new DataTable();
-            dt.Columns.Add("Photo", typeof(Image));
-            dt.Columns.Add("Title");
-            matchingBox.DataSource = dt;
-
-            matchingBox.Columns[0].Width = 24;
-            matchingBox.Columns[1].Width = 504;
-
-            matchingBox.Columns[0].SortMode = DataGridViewColumnSortMode.NotSortable;
-            matchingBox.Columns[1].SortMode = DataGridViewColumnSortMode.NotSortable;
-
-            foreach (Window window in windows)
+            windowsListBox.Items.Clear();
+            foreach (Window w in windows)
             {
-                if (!(window.getProcessName() == "") && !(window.getProcessTitle() == "")) {
-                    dt.Rows.Add(null, window.getProcessTitle());
-                }
+                windowsListBox.Items.Add(w);
             }
-
-            matchingBox.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
-            matchingBox.MultiSelect = false;
-            matchingBox.ReadOnly = true;
-
-            for(int i = 0; i < matchingBox.Rows.Count && i < windows.Count; i++) {
-                matchingBox.Rows[i].Cells[0].Value = resizeIcon(windows[i].getProcess().MainModule.FileName);
-            }
-
-            if (windows.Any())
+            if (windowsListBox.Items.Count > 0)
             {
-                matchingBox.Rows[0].Selected = true;
+                windowsListBox.SelectedIndex = 0;
             }
         }
 
@@ -135,24 +101,23 @@ namespace Sprung
 
         private void searchBoxKeyDown(object sender, KeyEventArgs e)
         {
-            if (this.matchingBox.Rows.Count == 0) return;
-
+            if (this.windowsListBox.Items.Count == 0) return;
             if (e.KeyCode == Keys.Enter)
             {
                 sendSelectedWindowToFront();
                 this.Visible = false;
                 e.Handled = true;
                 e.SuppressKeyPress = true;
-            }/*
-            else if (e.KeyCode == Keys.Down && this.matchingBox.SelectedIndex < (this.matchingBox.Items.Count - 1))
+            } 
+            else if (e.KeyCode == Keys.Down && this.windowsListBox.SelectedIndex < (this.windowsListBox.Items.Count - 1))
             {
-                this.matchingBox.SelectedIndex++;
+                this.windowsListBox.SelectedIndex++;
             }
-            else if (e.KeyCode == Keys.Up && this.matchingBox.Items.Count > 0 && this.matchingBox.SelectedIndex > 0)
+            else if (e.KeyCode == Keys.Up && this.windowsListBox.Items.Count > 0 && this.windowsListBox.SelectedIndex > 0)
             {
-                this.matchingBox.SelectedIndex--;
+                this.windowsListBox.SelectedIndex--;
             }
-            else */if (e.KeyCode == Keys.Escape)
+            else if (e.KeyCode == Keys.Escape)
             {
                 this.Visible = false;
                 this.Opacity = 0;
@@ -162,14 +127,14 @@ namespace Sprung
 
         private void sendSelectedWindowToFront()
         {
-            if (this.matchingBox.Rows.Count > 0)
+            if (this.windowsListBox.Items.Count > 0)
             {
-                //int selected = this.matchingBox.SelectedIndex;
-                // this is only to test, the real selected window has to be chose
-                Window window = windowManager.getProcesses()[0];
+                int selectedIndex = this.windowsListBox.SelectedIndex;
+                selectedIndex = selectedIndex == -1 ? 0 : selectedIndex;
+                Window selectedWindow = (Window) this.windowsListBox.Items[selectedIndex];
                 this.Visible = false;
                 this.Opacity = 0;
-                this.windowManager.sendWindowToFront(window);
+                this.windowManager.sentToFront(selectedWindow);
             }
         }
 

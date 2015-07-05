@@ -38,10 +38,9 @@ namespace Sprung
             return windows;
         }
 
-        public void sendWindowToFront(Window process)
+        public void sentToFront(Window window)
         {
-            IntPtr hWnd = process.getAdress();
-            forceWindowToFront(process.getAdress());
+            forceWindowToFront(window.getAdress());
         }
         
         private bool EnumWindowsProc(IntPtr hWnd, int lParam)
@@ -50,7 +49,6 @@ namespace Sprung
             {
                 windows.Add(new Window(hWnd, getProcessText(hWnd)));
             }
-
             return true;
         }
 
