@@ -17,6 +17,7 @@ namespace Sprung
         private WindowManager windowManager = null;
         private SystemTray tray = null;
         private WindowMatcher windowMatcher = null;
+        private Window mainWindow = null;
 
         const int MOD_ALT = 0x0001;
         const int MOD_CONTROL = 0x0002;
@@ -34,6 +35,7 @@ namespace Sprung
             this.ControlBox = false;
             this.ShowInTaskbar = false;
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
+            this.mainWindow = new Window(this.Handle);
         }
 
         private void loadCallback(object sender, EventArgs e)
@@ -55,11 +57,15 @@ namespace Sprung
 
         private void showProcesses(List<Window> windows)
         {
+            Console.WriteLine("begin showProcessed");
+            Console.Out.Flush();
             windowListBox.Items.Clear();
             foreach (Window w in windows)
             {
                 windowListBox.Items.Add(w);
             }
+            Console.WriteLine("end showProcessed");
+            Console.Out.Flush();
             if (windowListBox.Items.Count > 0)
             {
                 windowListBox.SelectedIndex = 0;
@@ -73,11 +79,10 @@ namespace Sprung
                 this.Visible = true;
                 this.Opacity = 100;
                 this.CenterToScreen();
-                this.windowManager.forceWindowToFront(this.Handle);
+                this.mainWindow.SendToFront();
                 this.Activate();
                 this.searchBox.Focus();
                 this.searchBox.Text = "";
-                this.windowManager.loadProcesses();
                 showProcesses(windowManager.getProcesses());
             }
             base.WndProc(ref m);
@@ -125,19 +130,15 @@ namespace Sprung
         {
             if (this.windowListBox.Items.Count > 0)
             {
+                // hide main window
+                this.Visible = false;
+                this.Opacity = 0;
+                // show window that was selected
                 int selectedIndex = this.windowListBox.SelectedIndex;
                 selectedIndex = selectedIndex == -1 ? 0 : selectedIndex;
                 Window selectedWindow = (Window) this.windowListBox.Items[selectedIndex];
-                this.Visible = false;
-                this.Opacity = 0;
-                this.windowManager.sentToFront(selectedWindow);
+                selectedWindow.SendToFront();
             }
         }
-
-        private void windowListBox1_SelectedIndexChanged(object sender, EventArgs e)
-        {
-
-        }
-
     }
 }

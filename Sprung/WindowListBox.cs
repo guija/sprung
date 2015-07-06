@@ -21,32 +21,28 @@ namespace Sprung
             const TextFormatFlags flags = TextFormatFlags.Left | TextFormatFlags.VerticalCenter;
             if (e.Index >= 0 && e.Index < Items.Count)
             {
-                
                 this.ItemHeight = 24;
                 Window window = Items[e.Index] as Window;
-                String text = window.getProcessTitle();
+                String text = window.getTitle();
                 text = text.Length > 60 ? text.Substring(0, 60) + "..." : text;
-
+                String processFileName = null;
                 try
                 {
-                    String processFileName = window.getProcess().MainModule.FileName;
+                    processFileName = window.getProcess().MainModule.FileName;
                 }
                 catch (Exception exception)
                 {
                     Console.Error.WriteLine(exception);
                     return;
                 }
-                
-                
-                // Get icon from process and resize it
-                Icon icon = Icon.ExtractAssociatedIcon(window.getProcess().MainModule.FileName);
-                Image image = (Image) new Bitmap(icon.ToBitmap(), new Size(20,20));
+
                 
                 e.DrawBackground();
-
-                // draw icon
+                // Get icon from process, resize it and draw it
+                Icon icon = Icon.ExtractAssociatedIcon(processFileName);
+                Image image = (Image)new Bitmap(icon.ToBitmap(), new Size(20, 20));
                 e.Graphics.DrawImage(image, 2, e.Bounds.Y + 2);
-
+                // Draw window title
                 var textRect = e.Bounds;
                 textRect.X += 24;
                 textRect.Width -= 20;

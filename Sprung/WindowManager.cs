@@ -5,23 +5,25 @@ using System.Text;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
+using System.Windows.Automation;
 
 namespace Sprung
 {
     class WindowManager
     {
-        private const int MAX_CHARS_TITLE = 255;
-
+        
         private List<Window> windows = new List<Window>();
 
+        private Boolean listTabs = true;
+
         // Contains the processes which should not be listed as a result
-        private List<String> eProcesses = new List<String>() { 
+        private static List<String> excludedProcesses = new List<String>() { 
             "", 
             "Sprung", 
-            "Program Manager" 
+            "Program Manager - Explorer" 
         };
 
-        public void loadProcesses()
+        public List<Window> getProcesses()
         {
             windows.Clear();
             EnumDelegate callback = new EnumDelegate(EnumWindowsProc);
@@ -30,58 +32,81 @@ namespace Sprung
             {
                 throw new Exception("Calling EnumDesktopWindows: Error ocurred: " + Marshal.GetLastWin32Error());
             }
-        }
-
-        public List<Window> getProcesses()
-        {
-            loadProcesses();
             return windows;
         }
 
-        public void sentToFront(Window window)
-        {
-            forceWindowToFront(window.getAdress());
-        }
-        
         private bool EnumWindowsProc(IntPtr hWnd, int lParam)
         {
-            if (!this.eProcesses.Contains(getProcessText(hWnd)) && IsWindowVisible(hWnd))
-            {
-                windows.Add(new Window(hWnd, getProcessText(hWnd)));
+            if (IsWindowVisible(hWnd)) {
+                Window window = new Window(hWnd);
+                if (!excludedProcesses.Contains(window.getTitle()) && !window.hasNoTitle())
+                {
+                    if (listTabs && window.getProcessName() == "firefox")
+                    {
+                        // TODO
+                        // iterate over tabs
+                        // add tabs as windows to windows list
+                        // create derived window class "FirefoxTabProxyWindow"
+                        getFirefoxTabs(window);
+                    }
+                    else
+                    {
+                        windows.Add(window);
+                    }
+                    
+                }
             }
             return true;
         }
 
-        public string getProcessText(IntPtr hWnd)
+        private List<Window> getFirefoxTabs(Window firefoxWindow)
         {
-            StringBuilder strbTitle = new StringBuilder(MAX_CHARS_TITLE);
-            strbTitle.Length = _GetWindowText(hWnd, strbTitle, strbTitle.Capacity + 1);
-            return strbTitle.ToString();
-        }
+            List<Window> tabs = new List<Window>();
+            
+            // firefox test
+            /*
+            Process firefoxProcess = firefoxWindow.getProcess();
+            AutomationElement rootElement = AutomationElement.FromHandle(firefoxProcess.MainWindowHandle);
 
-        public void forceWindowToFront(IntPtr hWnd)
-        {
-            uint foreThread = GetWindowThreadProcessId(GetForegroundWindow(), IntPtr.Zero);
-            uint appThread = GetCurrentThreadId();
-            const uint SW_SHOW = 5;
-            const uint SW_RESTORE = 9;
+            //String rootName = rootElement.Current.Name;
+            //Console.WriteLine("rootName = " + rootName);
+            AutomationElement browserTabsToolBar = rootElement.FindFirst(TreeScope.Children, new PropertyCondition(AutomationElement.NameProperty, @"Browser tabs"));
+            //Console.WriteLine("browserTabsToolBar = " + browserTabsToolBar.Current.Name);
+            AutomationElement browserTabsToolBarGroup = TreeWalker.ControlViewWalker.GetFirstChild(browserTabsToolBar);
+            //Console.WriteLine("browserTabsToolBarGroup = " + browserTabsToolBarGroup.Current.Name);
 
-            AttachThreadInput(foreThread, appThread, true);
-            Application.DoEvents();
+            List<AutomationElement> tabsAutomationElements = new List<AutomationElement>();
+            */
 
-            if (IsIconic(hWnd))
+            // iterate over tabs
+            /*
+            AutomationElement tab = TreeWalker.ControlViewWalker.GetFirstChild(browserTabsToolBarGroup);
+            while (tab != null)
             {
-                ShowWindow(hWnd, SW_RESTORE);
+                //Console.WriteLine("iteration!");
+                String tabname = tab.Current.Name;
+                if (tabname != "")
+                {
+                    tabsAutomationElements.Add(tab);
+                    Console.WriteLine("tab = " + tabname);
+                }
+                tab = TreeWalker.ControlViewWalker.GetNextSibling(tab);
             }
-            else
-            {
-                ShowWindow(hWnd, SW_SHOW);
-            }
+            */
 
-            BringWindowToTop(hWnd);
-            SetForegroundWindow(hWnd.ToInt32());
-            AttachThreadInput(foreThread, appThread, false);
+            return tabs;
 
+           //Console.WriteLine("select random tab");
+           // select random tab
+           //Random random = new Random();
+           //int idx = random.Next(tabs.Count);
+           //Console.WriteLine("index = " + idx);
+           //Console.WriteLine("try to focus '" + tabs[idx].Current.Name + "'");
+
+           // Sadly this doesn't work in firefox & chrome (pattern not supported)
+           //SelectionItemPattern sip = tabs[idx].GetCurrentPattern(SelectionItemPattern.Pattern) as SelectionItemPattern; 
+           //sip.Select();
+            
         }
 
         private delegate bool EnumDelegate(IntPtr hWnd, int lParam);
