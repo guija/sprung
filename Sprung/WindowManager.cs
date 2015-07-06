@@ -17,7 +17,7 @@ namespace Sprung
         // Contains the processes which should not be listed as a result
         private List<String> eProcesses = new List<String>() { 
             "", 
-            "Jumper", 
+            "Sprung", 
             "Program Manager" 
         };
 

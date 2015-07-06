@@ -29,6 +29,9 @@ namespace Sprung
             this.tray = new SystemTray();
             this.windowManager = new WindowManager();
             this.windowMatcher = new WindowMatcher(this.windowManager);
+            this.Visible = false;
+            this.Opacity = 0;
+            this.ControlBox = false;
         }
 
         private void loadCallback(object sender, EventArgs e)
@@ -50,30 +53,15 @@ namespace Sprung
 
         private void showProcesses(List<Window> windows)
         {
-            windowsListBox.Items.Clear();
+            windowListBox.Items.Clear();
             foreach (Window w in windows)
             {
-                windowsListBox.Items.Add(w);
+                windowListBox.Items.Add(w);
             }
-            if (windowsListBox.Items.Count > 0)
+            if (windowListBox.Items.Count > 0)
             {
-                windowsListBox.SelectedIndex = 0;
+                windowListBox.SelectedIndex = 0;
             }
-        }
-
-        private Icon resizeIcon(String fileName)
-        {
-            Size iconSize = SystemInformation.SmallIconSize;
-            Bitmap bitmap = new Bitmap(iconSize.Width, iconSize.Height);
-            Icon ico = Icon.ExtractAssociatedIcon(fileName);
-
-            using (Graphics g = Graphics.FromImage(bitmap))
-            {
-                g.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;
-                g.DrawImage(ico.ToBitmap(), new Rectangle(Point.Empty, iconSize));
-            }
-
-            return Icon.FromHandle(bitmap.GetHicon());
         }
 
         protected override void WndProc(ref Message m)
@@ -101,21 +89,19 @@ namespace Sprung
 
         private void searchBoxKeyDown(object sender, KeyEventArgs e)
         {
-            if (this.windowsListBox.Items.Count == 0) return;
+            if (this.windowListBox.Items.Count == 0) return;
             if (e.KeyCode == Keys.Enter)
             {
-                sendSelectedWindowToFront();
                 this.Visible = false;
-                e.Handled = true;
-                e.SuppressKeyPress = true;
+                sendSelectedWindowToFront();
             } 
-            else if (e.KeyCode == Keys.Down && this.windowsListBox.SelectedIndex < (this.windowsListBox.Items.Count - 1))
+            else if (e.KeyCode == Keys.Down && this.windowListBox.SelectedIndex < (this.windowListBox.Items.Count - 1))
             {
-                this.windowsListBox.SelectedIndex++;
+                this.windowListBox.SelectedIndex++;
             }
-            else if (e.KeyCode == Keys.Up && this.windowsListBox.Items.Count > 0 && this.windowsListBox.SelectedIndex > 0)
+            else if (e.KeyCode == Keys.Up && this.windowListBox.Items.Count > 0 && this.windowListBox.SelectedIndex > 0)
             {
-                this.windowsListBox.SelectedIndex--;
+                this.windowListBox.SelectedIndex--;
             }
             else if (e.KeyCode == Keys.Escape)
             {
@@ -124,26 +110,32 @@ namespace Sprung
             }
         }
 
+        private void searchBoxKeyPress(object sender, KeyPressEventArgs e)
+        {
+            if (e.KeyChar == (char) Keys.Enter || e.KeyChar == (char) Keys.Escape)
+            {
+                e.Handled = true;
+            }
+        }
+
 
         private void sendSelectedWindowToFront()
         {
-            if (this.windowsListBox.Items.Count > 0)
+            if (this.windowListBox.Items.Count > 0)
             {
-                int selectedIndex = this.windowsListBox.SelectedIndex;
+                int selectedIndex = this.windowListBox.SelectedIndex;
                 selectedIndex = selectedIndex == -1 ? 0 : selectedIndex;
-                Window selectedWindow = (Window) this.windowsListBox.Items[selectedIndex];
+                Window selectedWindow = (Window) this.windowListBox.Items[selectedIndex];
                 this.Visible = false;
                 this.Opacity = 0;
                 this.windowManager.sentToFront(selectedWindow);
             }
         }
 
-        private void searchBoxKeyPress(object sender, KeyPressEventArgs e)
+        private void windowListBox1_SelectedIndexChanged(object sender, EventArgs e)
         {
-            // Fix so that no error sound is played when exit key is
-            // pressed while the input box is focused because for 
-            // us it's a regular action (hide window).
-            if (e.KeyChar == Convert.ToChar(Keys.Enter)) e.Handled = true;
+
         }
+
     }
 }
