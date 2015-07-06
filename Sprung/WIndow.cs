@@ -30,7 +30,11 @@ namespace Sprung
                 this.process = Process.GetProcessById(getWindowProcessId(adress.ToInt32()));
                 this.processName = this.process.ProcessName;
                 this.processTitle = processTitle;
-                
+                Console.WriteLine(this.processName);
+                if (this.processName == "explorer")
+                {
+                    this.processTitle += " - Explorer";
+                }
             }
         }
 
