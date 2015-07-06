@@ -21,11 +21,22 @@ namespace Sprung
             const TextFormatFlags flags = TextFormatFlags.Left | TextFormatFlags.VerticalCenter;
             if (e.Index >= 0 && e.Index < Items.Count)
             {
-
+                
                 this.ItemHeight = 24;
                 Window window = Items[e.Index] as Window;
                 String text = window.getProcessTitle();
                 text = text.Length > 60 ? text.Substring(0, 60) + "..." : text;
+
+                try
+                {
+                    String processFileName = window.getProcess().MainModule.FileName;
+                }
+                catch (Exception exception)
+                {
+                    Console.Error.WriteLine(exception);
+                    return;
+                }
+                
                 
                 // Get icon from process and resize it
                 Icon icon = Icon.ExtractAssociatedIcon(window.getProcess().MainModule.FileName);

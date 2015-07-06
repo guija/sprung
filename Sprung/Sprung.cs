@@ -32,6 +32,8 @@ namespace Sprung
             this.Visible = false;
             this.Opacity = 0;
             this.ControlBox = false;
+            this.ShowInTaskbar = false;
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
         }
 
         private void loadCallback(object sender, EventArgs e)
