@@ -53,10 +53,13 @@ namespace Sprung
             this.matchingBox.Columns.Clear();
             this.matchingBox.AutoGenerateColumns = false;
             this.matchingBox.AllowUserToAddRows = false;
+            this.matchingBox.CellBorderStyle = DataGridViewCellBorderStyle.None;
+            this.matchingBox.ColumnHeadersVisible = false;
+            this.matchingBox.RowHeadersVisible = false;
 
             SprungLayout layout = new SprungLayout(matchingBox);
-            layout.addImageColumn("", 24);
-            layout.addTextColumn("Title", 504);
+            layout.addImageColumn("", 32);
+            layout.addTextColumn("Title", 537);
             layout.setNotSortable(true);
             layout.addProcesses(windows);
             layout.setSelectionMode(DataGridViewSelectionMode.FullRowSelect);
@@ -69,6 +72,7 @@ namespace Sprung
 
             for(int i = 0; i < matchingBox.Rows.Count && i < windows.Count; i++) {
                 this.matchingBox.Rows[i].Cells[0].Value = resizeIcon(windows[i].getProcess().MainModule.FileName);
+                this.matchingBox.Rows[i].Height = 32;
             }
 
             if (windows.Any())
@@ -79,7 +83,7 @@ namespace Sprung
 
         private Icon resizeIcon(String fileName)
         {
-            Size iconSize = SystemInformation.SmallIconSize;
+            Size iconSize = new Size(24, 24);
             Bitmap bitmap = new Bitmap(iconSize.Width, iconSize.Height);
             Icon ico = Icon.ExtractAssociatedIcon(fileName);
 
