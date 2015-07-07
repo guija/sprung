@@ -18,6 +18,7 @@ namespace Sprung
         private SystemTray tray = null;
         private WindowMatcher windowMatcher = null;
         private Window mainWindow = null;
+        private Settings settings = null;
 
         const int MOD_ALT = 0x0001;
         const int MOD_CONTROL = 0x0002;
@@ -27,8 +28,9 @@ namespace Sprung
         public Sprung()
         {
             InitializeComponent();
-            this.tray = new SystemTray();
-            this.windowManager = new WindowManager();
+            this.settings = new Settings();
+            this.tray = new SystemTray(settings);
+            this.windowManager = new WindowManager(settings);
             this.windowMatcher = new WindowMatcher(this.windowManager);
             this.Visible = false;
             this.Opacity = 0;
@@ -36,6 +38,7 @@ namespace Sprung
             this.ShowInTaskbar = false;
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
             this.mainWindow = new Window(this.Handle);
+            
         }
 
         private void loadCallback(object sender, EventArgs e)

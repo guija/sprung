@@ -1,0 +1,8 @@
+{
+	"excluded": [
+		"^$",
+		"^Sprung$",
+		"^Program Manager - Explorer$"
+	],
+	"list_tabs_as_windows": false
+}

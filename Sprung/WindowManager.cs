@@ -11,10 +11,9 @@ namespace Sprung
 {
     class WindowManager
     {
-        
-        private List<Window> windows = new List<Window>();
 
-        private Boolean listTabs = true;
+        private Settings settings;
+        private List<Window> windows = new List<Window>();
 
         // Contains the processes which should not be listed as a result
         private static List<String> excludedProcesses = new List<String>() { 
@@ -22,6 +21,11 @@ namespace Sprung
             "Sprung", 
             "Program Manager - Explorer" 
         };
+
+        public WindowManager(Settings settings)
+        {
+            this.settings = settings;
+        }
 
         public List<Window> getProcesses()
         {
@@ -39,9 +43,9 @@ namespace Sprung
         {
             if (IsWindowVisible(hWnd)) {
                 Window window = new Window(hWnd);
-                if (!excludedProcesses.Contains(window.getTitle()) && !window.hasNoTitle())
+                if (!settings.isWindowTitleExcluded(window.getTitle()) && !window.hasNoTitle())
                 {
-                    if (listTabs && window.getProcessName() == "firefox")
+                    if (settings.isListTabsAsWindows() && window.getProcessName() == "firefox")
                     {
                         // TODO
                         // iterate over tabs
@@ -82,8 +86,6 @@ namespace Sprung
             /*
             AutomationElement tab = TreeWalker.ControlViewWalker.GetFirstChild(browserTabsToolBarGroup);
             while (tab != null)
-            {
-                //Console.WriteLine("iteration!");
                 String tabname = tab.Current.Name;
                 if (tabname != "")
                 {
