@@ -14,9 +14,9 @@ namespace Sprung
     public partial class Sprung : Form
     {
 
-        private WindowManager windowManager = null;
-        private SystemTray tray = null;
-        private WindowMatcher windowMatcher = null;
+        private WindowManager windowManager;
+        private SystemTray tray;
+        private WindowMatcher windowMatcher;
 
         const int MOD_ALT = 0x0001;
         const int MOD_CONTROL = 0x0002;
@@ -50,48 +50,30 @@ namespace Sprung
 
         private void showProcesses(List<Window> windows)
         {
+            this.matchingBox.Columns.Clear();
+            this.matchingBox.AutoGenerateColumns = false;
+            this.matchingBox.AllowUserToAddRows = false;
 
-            matchingBox.Columns.Clear();
+            SprungLayout layout = new SprungLayout(matchingBox);
+            layout.addImageColumn("", 24);
+            layout.addTextColumn("Title", 504);
+            layout.setNotSortable(true);
+            layout.addProcesses(windows);
+            layout.setSelectionMode(DataGridViewSelectionMode.FullRowSelect);
+            layout.setScrolls(ScrollBars.None);
+            layout.setResizeable(false);
+            layout.setMultiSelect(false);
+            layout.setReadOnly(true);
 
-            matchingBox.AutoGenerateColumns = false;
-            var imageCol = new DataGridViewImageColumn();
-            var titleCol = new DataGridViewTextBoxColumn();
-
-            imageCol.DataPropertyName = "";
-            titleCol.DataPropertyName = "Title";
-
-            matchingBox.Columns.Add(imageCol);
-            matchingBox.Columns.Add(titleCol);
-
-            var dt = new DataTable();
-            dt.Columns.Add("Photo", typeof(Image));
-            dt.Columns.Add("Title");
-            matchingBox.DataSource = dt;
-
-            matchingBox.Columns[0].Width = 24;
-            matchingBox.Columns[1].Width = 504;
-
-            matchingBox.Columns[0].SortMode = DataGridViewColumnSortMode.NotSortable;
-            matchingBox.Columns[1].SortMode = DataGridViewColumnSortMode.NotSortable;
-
-            foreach (Window window in windows)
-            {
-                if (!(window.getProcessName() == "") && !(window.getProcessTitle() == "")) {
-                    dt.Rows.Add(null, window.getProcessTitle());
-                }
-            }
-
-            matchingBox.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
-            matchingBox.MultiSelect = false;
-            matchingBox.ReadOnly = true;
+            this.matchingBox.DataSource = layout.getTable();
 
             for(int i = 0; i < matchingBox.Rows.Count && i < windows.Count; i++) {
-                matchingBox.Rows[i].Cells[0].Value = resizeIcon(windows[i].getProcess().MainModule.FileName);
+                this.matchingBox.Rows[i].Cells[0].Value = resizeIcon(windows[i].getProcess().MainModule.FileName);
             }
 
             if (windows.Any())
             {
-                matchingBox.Rows[0].Selected = true;
+                this.matchingBox.Rows[0].Selected = true;
             }
         }
 
@@ -133,9 +115,12 @@ namespace Sprung
         [DllImport("user32.dll")]
         private static extern bool UnregisterHotKey(IntPtr hWnd, int id);
 
-        private void searchBoxKeyDown(object sender, KeyEventArgs e)
+        private void searchBoxKeyControl(object sender, KeyEventArgs e)
         {
+
             if (this.matchingBox.Rows.Count == 0) return;
+
+            int selected = this.matchingBox.CurrentRow.Index;
 
             if (e.KeyCode == Keys.Enter)
             {
@@ -143,19 +128,26 @@ namespace Sprung
                 this.Visible = false;
                 e.Handled = true;
                 e.SuppressKeyPress = true;
-            }/*
-            else if (e.KeyCode == Keys.Down && this.matchingBox.SelectedIndex < (this.matchingBox.Items.Count - 1))
-            {
-                this.matchingBox.SelectedIndex++;
+                return;
             }
-            else if (e.KeyCode == Keys.Up && this.matchingBox.Items.Count > 0 && this.matchingBox.SelectedIndex > 0)
+
+            if (e.KeyCode == Keys.Down && this.matchingBox.CurrentCell.RowIndex < (this.matchingBox.Rows.Count - 1))
             {
-                this.matchingBox.SelectedIndex--;
+                this.matchingBox.CurrentCell = this.matchingBox.Rows[selected + 1].Cells[0];
+                return;
             }
-            else */if (e.KeyCode == Keys.Escape)
+            
+            if (e.KeyCode == Keys.Up && this.matchingBox.Rows.Count > 0 && this.matchingBox.CurrentCell.RowIndex > 0)
+            {
+                this.matchingBox.CurrentCell = this.matchingBox.Rows[selected - 1].Cells[0];
+                return;
+            }
+            
+            if (e.KeyCode == Keys.Escape)
             {
                 this.Visible = false;
                 this.Opacity = 0;
+                return;
             }
         }
 
@@ -164,9 +156,8 @@ namespace Sprung
         {
             if (this.matchingBox.Rows.Count > 0)
             {
-                //int selected = this.matchingBox.SelectedIndex;
-                // this is only to test, the real selected window has to be chose
-                Window window = windowManager.getProcesses()[0];
+                int selected = this.matchingBox.CurrentRow.Index;
+                Window window = windowManager.getProcesses()[selected];
                 this.Visible = false;
                 this.Opacity = 0;
                 this.windowManager.sendWindowToFront(window);
@@ -175,9 +166,6 @@ namespace Sprung
 
         private void searchBoxKeyPress(object sender, KeyPressEventArgs e)
         {
-            // Fix so that no error sound is played when exit key is
-            // pressed while the input box is focused because for 
-            // us it's a regular action (hide window).
             if (e.KeyChar == Convert.ToChar(Keys.Enter)) e.Handled = true;
         }
     }

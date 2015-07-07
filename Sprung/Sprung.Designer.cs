@@ -41,8 +41,8 @@
             this.searchBox.Size = new System.Drawing.Size(571, 20);
             this.searchBox.TabIndex = 1;
             this.searchBox.TextChanged += new System.EventHandler(this.inputChangedCallback);
-            this.searchBox.KeyDown += new System.Windows.Forms.KeyEventHandler(this.searchBoxKeyDown);
             this.searchBox.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.searchBoxKeyPress);
+            this.searchBox.KeyUp += new System.Windows.Forms.KeyEventHandler(this.searchBoxKeyControl);
             // 
             // matchingBox
             // 
@@ -52,7 +52,7 @@
             this.matchingBox.Size = new System.Drawing.Size(571, 219);
             this.matchingBox.TabIndex = 2;
             // 
-            // Jumper
+            // Sprung
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -63,7 +63,7 @@
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MaximizeBox = false;
-            this.Name = "Jumper";
+            this.Name = "Sprung";
             this.Text = "Jumper";
             this.Load += new System.EventHandler(this.loadCallback);
             ((System.ComponentModel.ISupportInitialize)(this.matchingBox)).EndInit();

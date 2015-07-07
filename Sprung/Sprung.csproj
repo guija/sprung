@@ -79,6 +79,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="SprungLayout.cs" />
     <Compile Include="Sprung.cs">
       <SubType>Form</SubType>
     </Compile>
