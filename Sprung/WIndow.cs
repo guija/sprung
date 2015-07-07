@@ -53,14 +53,6 @@ namespace Sprung
         {
             return this.process;
         }
-
-
-        public Int32 getWindowProcessId(Int32 adress)
-        {
-            Int32 pointer = 1;
-            GetWindowThreadProcessId(adress, out pointer);
-            return pointer;
-        }
       
         public int getMatchingPriority()
         {
@@ -70,6 +62,13 @@ namespace Sprung
         public void setMatchingPriority(int matchingPriority)
         {
             this.matchingPriority = matchingPriority;
+        }
+
+        public Int32 getWindowProcessId(Int32 adress)
+        {
+            Int32 pointer = 1;
+            GetWindowThreadProcessId(adress, out pointer);
+            return pointer;
         }
 
         public int getMatchingGroups()

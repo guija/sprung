@@ -41,11 +41,12 @@
             this.searchBox.Size = new System.Drawing.Size(571, 20);
             this.searchBox.TabIndex = 1;
             this.searchBox.TextChanged += new System.EventHandler(this.inputChangedCallback);
+            this.searchBox.KeyDown += new System.Windows.Forms.KeyEventHandler(this.searchBoxKeyControl);
             this.searchBox.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.searchBoxKeyPress);
-            this.searchBox.KeyUp += new System.Windows.Forms.KeyEventHandler(this.searchBoxKeyControl);
             // 
             // matchingBox
             // 
+            this.matchingBox.BackgroundColor = System.Drawing.SystemColors.ControlLightLight;
             this.matchingBox.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.matchingBox.Location = new System.Drawing.Point(12, 38);
             this.matchingBox.Name = "matchingBox";
