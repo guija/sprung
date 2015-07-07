@@ -38,12 +38,31 @@ namespace Sprung
             this.ShowInTaskbar = false;
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
             this.mainWindow = new Window(this.Handle);
-            
         }
 
         private void loadCallback(object sender, EventArgs e)
         {
-            RegisterHotKey(this.Handle, 1, MOD_ALT, (int)Keys.Space);
+            // todo register hotkey here!!
+            // get control key
+            int modifiers = (int)(Keys.Modifiers & settings.getShortcut());
+            int keyCode = (int)(Keys.KeyCode & settings.getShortcut());
+            Console.WriteLine("modifiers = " + modifiers);
+            Console.WriteLine("keyCode = " + keyCode);
+
+            Console.WriteLine("alt: " + (int)Keys.Alt);
+            Console.WriteLine("alt (richtig): " + (int)MOD_ALT);
+            Console.WriteLine("space: " + (int)Keys.Space);
+
+            //RegisterHotKey(this.Handle, 1, MOD_ALT, (int)Keys.Space);
+            int transformedModifier = 0;
+            switch (modifiers)
+            {
+                case (int)Keys.Control: transformedModifier = MOD_CONTROL; break;
+                case (int)Keys.Alt: transformedModifier = MOD_ALT; break;
+                case (int)Keys.Shift: transformedModifier = MOD_SHIFT; break;
+                default: transformedModifier = MOD_ALT; break;
+            }
+            RegisterHotKey(this.Handle, 1, transformedModifier, keyCode);
         }
 
         private void exitCallback(object sender, EventArgs e)
@@ -60,15 +79,11 @@ namespace Sprung
 
         private void showProcesses(List<Window> windows)
         {
-            Console.WriteLine("begin showProcessed");
-            Console.Out.Flush();
             windowListBox.Items.Clear();
             foreach (Window w in windows)
             {
                 windowListBox.Items.Add(w);
             }
-            Console.WriteLine("end showProcessed");
-            Console.Out.Flush();
             if (windowListBox.Items.Count > 0)
             {
                 windowListBox.SelectedIndex = 0;
@@ -77,7 +92,7 @@ namespace Sprung
 
         protected override void WndProc(ref Message m)
         {
-            if(m.Msg == WM_HOTKEY && (int)m.WParam == 1)
+            if(m.Msg == WM_HOTKEY && (int) m.WParam == 1)
             {
                 this.Visible = true;
                 this.Opacity = 100;
@@ -90,12 +105,6 @@ namespace Sprung
             }
             base.WndProc(ref m);
         }
-
-        [DllImport("user32.dll")]
-        private static extern bool RegisterHotKey(IntPtr hWnd, int id, int fsModifiers, int vk);
-
-        [DllImport("user32.dll")]
-        private static extern bool UnregisterHotKey(IntPtr hWnd, int id);
 
         private void searchBoxKeyDown(object sender, KeyEventArgs e)
         {
@@ -143,5 +152,11 @@ namespace Sprung
                 selectedWindow.SendToFront();
             }
         }
+
+        [DllImport("user32.dll")]
+        private static extern bool RegisterHotKey(IntPtr hWnd, int id, int fsModifiers, int vk);
+
+        [DllImport("user32.dll")]
+        private static extern bool UnregisterHotKey(IntPtr hWnd, int id);
     }
 }

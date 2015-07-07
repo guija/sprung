@@ -4,5 +4,6 @@
 		"^Sprung$",
 		"^Program Manager - Explorer$"
 	],
-	"list_tabs_as_windows": false
+	"list_tabs_as_windows": false,
+	"open_window_list" : "Alt+Space"
 }

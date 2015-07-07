@@ -8,14 +8,17 @@ using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json.Linq;
 using System.Text.RegularExpressions;
+using System.Windows.Forms;
 
 namespace Sprung
 {
     class Settings
     {
 
+        private KeysConverter keysConverter = new KeysConverter();
         private List<Regex> excludedPatterns = new List<Regex>();
         private Boolean listTabsAsWindows = false;
+        private Keys shortcut;
 
         public Settings()
         {
@@ -29,20 +32,18 @@ namespace Sprung
             if(settings["excluded"] != null) {
                 foreach(string pattern in settings["excluded"]) {
                     excludedPatterns.Add(new Regex(pattern));
-                    Console.WriteLine(pattern);
                 }
             }
             if (settings["list_tabs_as_windows"] != null)
             {
                 listTabsAsWindows = (Boolean) settings["list_tabs_as_windows"];
             }
-            else
+            if (settings["open_window_list"] != null)
             {
-                listTabsAsWindows = false;
+                String shortcutAsString = (String) settings["open_window_list"];
+                this.shortcut = (Keys) keysConverter.ConvertFrom(shortcutAsString);
             }
-
-            Console.WriteLine("list_tabs_as_windows: " + listTabsAsWindows);
-            
+            Console.WriteLine("Settings reloaded");
         }
 
         public Boolean isWindowTitleExcluded(string windowTitle) {
@@ -59,6 +60,11 @@ namespace Sprung
         public Boolean isListTabsAsWindows()
         {
             return listTabsAsWindows;
+        }
+
+        public Keys getShortcut()
+        {
+            return this.shortcut;
         }
     }
 }
