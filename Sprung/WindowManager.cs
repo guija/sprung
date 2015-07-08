@@ -6,6 +6,8 @@ using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using System.Windows.Automation;
+using System.IO;
+using Newtonsoft.Json.Linq;
 
 namespace Sprung
 {
@@ -55,45 +57,30 @@ namespace Sprung
         private List<Window> getFirefoxTabs(Window firefoxWindow)
         {
             List<Window> tabs = new List<Window>();
-            
-            // Find tab toolbar
-            Process firefoxProcess = firefoxWindow.getProcess();
-            AutomationElement rootElement = AutomationElement.FromHandle(firefoxProcess.MainWindowHandle);          
-            AutomationElement browserTabsToolBar = rootElement.FindFirst(TreeScope.Children, new OrCondition(
-                new PropertyCondition(AutomationElement.NameProperty, "Browser tabs"),
-                new PropertyCondition(AutomationElement.NameProperty, "Browser-Tabs")));
-            AutomationElement browserTabsToolBarGroup = TreeWalker.ControlViewWalker.GetFirstChild(browserTabsToolBar);
+            string path = Directory.GetParent(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData)).FullName;
+            if (Environment.OSVersion.Version.Major >= 6) path = Directory.GetParent(path).ToString();
+            path += "/AppData/Roaming/Mozilla/Firefox/Profiles";
+            path = Directory.GetDirectories(path)[0];
+            path += "/sessionstore-backups/";
 
-            // iterate over tabs
-            int tabIndex = 0;
-            int currentTabIndex = 0;
-            AutomationElement tab = TreeWalker.ControlViewWalker.GetFirstChild(browserTabsToolBarGroup);
-            while (tab != null) 
-            {
-                String title = tab.Current.Name;
-                if (title != "")
-                {
-                    if (firefoxWindow.getTitle() == title + " - Mozilla Firefox")
-                    {
-                        currentTabIndex = tabIndex;
-                    }
-                    Window tabWindow = new FirefoxTabWindow(firefoxWindow.getHandle(), 0, tabIndex, title);
-                    tabs.Add(tabWindow);
-                    tabIndex++;
-                }
-                tab = TreeWalker.ControlViewWalker.GetNextSibling(tab);
-            }
-            // adjust current tab index for every tab
-            foreach (FirefoxTabWindow window in tabs)
-            {
-                window.currentTabIndex = currentTabIndex;
-            }
-            return tabs;
+            String recovery = path + "/recovery.js";
+            String recoveryTmp = path + "/recovery.js.tmp";
+            String file = File.Exists(recoveryTmp) ? recoveryTmp : recovery;
 
-           // Sadly this doesn't work in firefox & chrome (pattern not supported)
-           //SelectionItemPattern sip = tabs[idx].GetCurrentPattern(SelectionItemPattern.Pattern) as SelectionItemPattern; 
-           //sip.Select();
-            
+            StreamReader streamReader = new StreamReader(file);
+            String content = streamReader.ReadToEnd();
+            JObject data = JObject.Parse(content);
+            int currentTabIndex = (int)data["windows"][0]["selected"] - 1;
+
+            int i = 0;
+            foreach (JObject tab in data["windows"][0]["tabs"])
+            {
+                JArray entries = (JArray)tab["entries"];
+                JObject currentEntry = (JObject)entries.Last;
+                String title = (String)currentEntry["title"];
+                tabs.Add(new FirefoxTabWindow(firefoxWindow.getHandle(), currentTabIndex, i++, title));
+            }
+            return tabs;              
         }
 
         private delegate bool EnumDelegate(IntPtr hWnd, int lParam);
