@@ -15,13 +15,6 @@ namespace Sprung
         private Settings settings;
         private List<Window> windows = new List<Window>();
 
-        // Contains the processes which should not be listed as a result
-        private static List<String> excludedProcesses = new List<String>() { 
-            "", 
-            "Sprung", 
-            "Program Manager - Explorer" 
-        };
-
         public WindowManager(Settings settings)
         {
             this.settings = settings;
