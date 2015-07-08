@@ -50,7 +50,6 @@ namespace Sprung
 
         private void showProcesses(List<Window> windows)
         {
-            this.matchingBox.Columns.Clear();
             this.matchingBox.AutoGenerateColumns = false;
             this.matchingBox.AllowUserToAddRows = false;
             this.matchingBox.CellBorderStyle = DataGridViewCellBorderStyle.None;
@@ -151,8 +150,7 @@ namespace Sprung
             if (this.matchingBox.Rows.Count > 0)
             {
                 int selected = this.matchingBox.CurrentRow.Index;
-                Window window = windowManager.getProcesses()[selected];
-                if(window != null) Console.WriteLine(window.getProcessTitle());
+                Window window = windowMatcher.getSortedWindows()[selected];
                 this.Visible = false;
                 this.Opacity = 0;
                 this.windowManager.sendWindowToFront(window);

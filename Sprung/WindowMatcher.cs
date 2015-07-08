@@ -7,7 +7,8 @@ namespace Sprung
 {
     class WindowMatcher
     {
-        private WindowManager windowManager = null;
+        private WindowManager windowManager;
+        private List<Window> windows;
 
         public WindowMatcher(WindowManager windowManager)
         {
@@ -45,13 +46,19 @@ namespace Sprung
                         lastMatched = false;
                     }
                 }
+
                 window.setMatchingPriority(matchingChars);
                 window.setMatchingGroups(matchingGroups);
                 windows.Add(window);
             }
 
             windows.Sort();
+            this.windows = windows;
             return windows;
+        }
+
+        public List<Window> getSortedWindows() {
+            return this.windows;
         }
     }
 }
