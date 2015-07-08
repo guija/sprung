@@ -63,16 +63,13 @@ namespace Sprung
         {
             List<Window> tabs = new List<Window>();
             
-            // firefox test
+            // Find tab toolbar
             Process firefoxProcess = firefoxWindow.getProcess();
-            AutomationElement rootElement = AutomationElement.FromHandle(firefoxProcess.MainWindowHandle);
-
-            //String rootName = rootElement.Current.Name;
-            //Console.WriteLine("rootName = " + rootName);
-            AutomationElement browserTabsToolBar = rootElement.FindFirst(TreeScope.Children, new PropertyCondition(AutomationElement.NameProperty, @"Browser tabs"));
-            //Console.WriteLine("browserTabsToolBar = " + browserTabsToolBar.Current.Name);
+            AutomationElement rootElement = AutomationElement.FromHandle(firefoxProcess.MainWindowHandle);          
+            AutomationElement browserTabsToolBar = rootElement.FindFirst(TreeScope.Children, new OrCondition(
+                new PropertyCondition(AutomationElement.NameProperty, "Browser tabs"),
+                new PropertyCondition(AutomationElement.NameProperty, "Browser-Tabs")));
             AutomationElement browserTabsToolBarGroup = TreeWalker.ControlViewWalker.GetFirstChild(browserTabsToolBar);
-            //Console.WriteLine("browserTabsToolBarGroup = " + browserTabsToolBarGroup.Current.Name);
 
             // iterate over tabs
             int tabIndex = 0;
@@ -93,20 +90,12 @@ namespace Sprung
                 }
                 tab = TreeWalker.ControlViewWalker.GetNextSibling(tab);
             }
-
+            // adjust current tab index for every tab
             foreach (FirefoxTabWindow window in tabs)
             {
                 window.currentTabIndex = currentTabIndex;
             }
-
             return tabs;
-
-           //Console.WriteLine("select random tab");
-           // select random tab
-           //Random random = new Random();
-           //int idx = random.Next(tabs.Count);
-           //Console.WriteLine("index = " + idx);
-           //Console.WriteLine("try to focus '" + tabs[idx].Current.Name + "'");
 
            // Sadly this doesn't work in firefox & chrome (pattern not supported)
            //SelectionItemPattern sip = tabs[idx].GetCurrentPattern(SelectionItemPattern.Pattern) as SelectionItemPattern; 
@@ -162,5 +151,6 @@ namespace Sprung
 
         [DllImport("user32.dll")]
         static extern bool IsIconic(IntPtr hWnd);
+
     }
 }

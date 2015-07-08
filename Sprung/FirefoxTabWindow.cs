@@ -37,11 +37,11 @@ namespace Sprung
             {
                 if (direction < 0)
                 {
-                    SendKeys.SendWait("^{PGUP}");
+                    SendKeys.Send("^{PGUP}");
                 }
                 else
                 {
-                    SendKeys.SendWait("^{PGDN}");
+                    SendKeys.Send("^{PGDN}");
                 }
             }
         }
