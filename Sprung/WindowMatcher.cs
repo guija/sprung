@@ -22,7 +22,7 @@ namespace Sprung
             List<Window> windows = new List<Window>();
             foreach (Window window in this.windowManager.getProcesses())
             {
-                String title = window.getProcessTitle().ToLower();
+                String title = window.getTitle().ToLower();
                 pattern = pattern.ToLower();
                 int matchingGroups = 0;
                 int matchingChars = 0;

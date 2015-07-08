@@ -14,9 +14,11 @@ namespace Sprung
     public partial class Sprung : Form
     {
 
-        private WindowManager windowManager;
-        private SystemTray tray;
-        private WindowMatcher windowMatcher;
+        private WindowManager windowManager = null;
+        private SystemTray tray = null;
+        private WindowMatcher windowMatcher = null;
+        private Window mainWindow = null;
+        private Settings settings = null;
 
         const int MOD_ALT = 0x0001;
         const int MOD_CONTROL = 0x0002;
@@ -26,14 +28,32 @@ namespace Sprung
         public Sprung()
         {
             InitializeComponent();
-            this.tray = new SystemTray();
-            this.windowManager = new WindowManager();
+            this.settings = new Settings();
+            this.tray = new SystemTray(settings);
+            this.windowManager = new WindowManager(settings);
             this.windowMatcher = new WindowMatcher(this.windowManager);
+            this.Visible = false;
+            this.Opacity = 0;
+            this.ControlBox = false;
+            this.ShowInTaskbar = false;
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
+            this.mainWindow = new Window(this.Handle);
         }
 
         private void loadCallback(object sender, EventArgs e)
         {
-            RegisterHotKey(this.Handle, 1, MOD_ALT, (int)Keys.Space);
+            initShortcut();
+        }
+
+        public void initShortcut()
+        {
+            int modifiers = (int)(Keys.Modifiers & settings.getShortcut());
+            int keyCode = (int)(Keys.KeyCode & settings.getShortcut());
+            int transformedModifier = 0x0;
+            if ((modifiers & (int)Keys.Control) > 0) transformedModifier |= MOD_CONTROL;
+            if ((modifiers & (int)Keys.Alt) > 0) transformedModifier |= MOD_ALT;
+            if ((modifiers & (int)Keys.Shift) > 0) transformedModifier |= MOD_SHIFT; ;
+            RegisterHotKey(this.Handle, 1, transformedModifier, keyCode);
         }
 
         private void exitCallback(object sender, EventArgs e)
@@ -50,66 +70,78 @@ namespace Sprung
 
         private void showProcesses(List<Window> windows)
         {
-            this.matchingBox.AutoGenerateColumns = false;
-            this.matchingBox.AllowUserToAddRows = false;
-            this.matchingBox.CellBorderStyle = DataGridViewCellBorderStyle.None;
-            this.matchingBox.ColumnHeadersVisible = false;
-            this.matchingBox.RowHeadersVisible = false;
-
-            SprungLayout layout = new SprungLayout(matchingBox);
-            layout.addImageColumn("", 32);
-            layout.addTextColumn("Title", 537);
-            layout.setNotSortable(true);
-            layout.addProcesses(windows);
-            layout.setSelectionMode(DataGridViewSelectionMode.FullRowSelect);
-            layout.setScrolls(ScrollBars.None);
-            layout.setResizeable(false);
-            layout.setMultiSelect(false);
-            layout.setReadOnly(true);
-
-            this.matchingBox.DataSource = layout.getTable();
-
-            for(int i = 0; i < matchingBox.Rows.Count && i < windows.Count; i++) {
-                this.matchingBox.Rows[i].Cells[0].Value = resizeIcon(windows[i].getProcess().MainModule.FileName);
-                this.matchingBox.Rows[i].Height = 32;
-
-            }
-
-            if (windows.Any())
+            windowListBox.Items.Clear();
+            foreach (Window w in windows)
             {
-                this.matchingBox.Rows[0].Selected = true;
+                windowListBox.Items.Add(w);
             }
-        }
-
-        private Icon resizeIcon(String fileName)
-        {
-            Size iconSize = new Size(24, 24);
-            Bitmap bitmap = new Bitmap(iconSize.Width, iconSize.Height);
-            Icon ico = Icon.ExtractAssociatedIcon(fileName);
-
-            using (Graphics g = Graphics.FromImage(bitmap))
+            if (windowListBox.Items.Count > 0)
             {
-                g.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;
-                g.DrawImage(ico.ToBitmap(), new Rectangle(Point.Empty, iconSize));
+                windowListBox.SelectedIndex = 0;
             }
-
-            return Icon.FromHandle(bitmap.GetHicon());
         }
 
         protected override void WndProc(ref Message m)
         {
-            if(m.Msg == WM_HOTKEY && (int)m.WParam == 1)
+            if(m.Msg == WM_HOTKEY && (int) m.WParam == 1)
             {
                 this.Visible = true;
                 this.Opacity = 100;
                 this.CenterToScreen();
-                this.windowManager.forceWindowToFront(this.Handle);
+                this.mainWindow.SendToFront();
                 this.Activate();
                 this.searchBox.Focus();
                 this.searchBox.Text = "";
-                showProcesses(windowMatcher.getSortedWindows());
+                showProcesses(windowManager.getProcesses());
             }
             base.WndProc(ref m);
+        }
+
+        private void searchBoxKeyDown(object sender, KeyEventArgs e)
+        {
+            if (this.windowListBox.Items.Count == 0) return;
+            if (e.KeyCode == Keys.Enter)
+            {
+                this.Visible = false;
+                sendSelectedWindowToFront();
+            } 
+            else if (e.KeyCode == Keys.Down && this.windowListBox.SelectedIndex < (this.windowListBox.Items.Count - 1))
+            {
+                this.windowListBox.SelectedIndex++;
+            }
+            else if (e.KeyCode == Keys.Up && this.windowListBox.Items.Count > 0 && this.windowListBox.SelectedIndex > 0)
+            {
+                this.windowListBox.SelectedIndex--;
+            }
+            else if (e.KeyCode == Keys.Escape)
+            {
+                this.Visible = false;
+                this.Opacity = 0;
+            }
+        }
+
+        private void searchBoxKeyPress(object sender, KeyPressEventArgs e)
+        {
+            if (e.KeyChar == (char) Keys.Enter || e.KeyChar == (char) Keys.Escape)
+            {
+                e.Handled = true;
+            }
+        }
+
+
+        private void sendSelectedWindowToFront()
+        {
+            if (this.windowListBox.Items.Count > 0)
+            {
+                // hide main window
+                this.Visible = false;
+                this.Opacity = 0;
+                // show window that was selected
+                int selectedIndex = this.windowListBox.SelectedIndex;
+                selectedIndex = selectedIndex == -1 ? 0 : selectedIndex;
+                Window selectedWindow = (Window) this.windowListBox.Items[selectedIndex];
+                selectedWindow.SendToFront();
+            }
         }
 
         [DllImport("user32.dll")]
@@ -117,49 +149,5 @@ namespace Sprung
 
         [DllImport("user32.dll")]
         private static extern bool UnregisterHotKey(IntPtr hWnd, int id);
-
-        private void searchBoxKeyControl(object sender, KeyEventArgs e)
-        {
-
-            if (this.matchingBox.Rows.Count == 0) return;
-
-            int selected = this.matchingBox.CurrentRow.Index;
-
-            if (e.KeyCode == Keys.Enter)
-            {
-                sendSelectedWindowToFront();
-                this.Visible = false;
-                e.Handled = true;
-                e.SuppressKeyPress = true;
-            }else if (e.KeyCode == Keys.Down && this.matchingBox.CurrentCell.RowIndex < (this.matchingBox.Rows.Count - 1))
-            {
-                this.matchingBox.CurrentCell = this.matchingBox.Rows[selected + 1].Cells[0];
-            }else if (e.KeyCode == Keys.Up && this.matchingBox.Rows.Count > 0 && this.matchingBox.CurrentCell.RowIndex > 0)
-            {
-                this.matchingBox.CurrentCell = this.matchingBox.Rows[selected - 1].Cells[0];
-            }else if (e.KeyCode == Keys.Escape)
-            {
-                this.Visible = false;
-                this.Opacity = 0;
-            }
-        }
-
-
-        private void sendSelectedWindowToFront()
-        {
-            if (this.matchingBox.Rows.Count > 0)
-            {
-                int selected = this.matchingBox.CurrentRow.Index;
-                Window window = windowMatcher.getSortedWindows()[selected];
-                this.Visible = false;
-                this.Opacity = 0;
-                this.windowManager.sendWindowToFront(window);
-            }
-        }
-
-        private void searchBoxKeyPress(object sender, KeyPressEventArgs e)
-        {
-            if (e.KeyChar == Convert.ToChar(Keys.Enter)) e.Handled = true;
-        }
     }
 }
