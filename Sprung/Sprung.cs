@@ -42,26 +42,17 @@ namespace Sprung
 
         private void loadCallback(object sender, EventArgs e)
         {
-            // todo register hotkey here!!
-            // get control key
+            initShortcut();
+        }
+
+        public void initShortcut()
+        {
             int modifiers = (int)(Keys.Modifiers & settings.getShortcut());
             int keyCode = (int)(Keys.KeyCode & settings.getShortcut());
-            Console.WriteLine("modifiers = " + modifiers);
-            Console.WriteLine("keyCode = " + keyCode);
-
-            Console.WriteLine("alt: " + (int)Keys.Alt);
-            Console.WriteLine("alt (richtig): " + (int)MOD_ALT);
-            Console.WriteLine("space: " + (int)Keys.Space);
-
-            //RegisterHotKey(this.Handle, 1, MOD_ALT, (int)Keys.Space);
-            int transformedModifier = 0;
-            switch (modifiers)
-            {
-                case (int)Keys.Control: transformedModifier = MOD_CONTROL; break;
-                case (int)Keys.Alt: transformedModifier = MOD_ALT; break;
-                case (int)Keys.Shift: transformedModifier = MOD_SHIFT; break;
-                default: transformedModifier = MOD_ALT; break;
-            }
+            int transformedModifier = 0x0;
+            if ((modifiers & (int)Keys.Control) > 0) transformedModifier |= MOD_CONTROL;
+            if ((modifiers & (int)Keys.Alt) > 0) transformedModifier |= MOD_ALT;
+            if ((modifiers & (int)Keys.Shift) > 0) transformedModifier |= MOD_SHIFT; ;
             RegisterHotKey(this.Handle, 1, transformedModifier, keyCode);
         }
 
