@@ -132,26 +132,16 @@ namespace Sprung
                 this.Visible = false;
                 e.Handled = true;
                 e.SuppressKeyPress = true;
-                return;
-            }
-
-            if (e.KeyCode == Keys.Down && this.matchingBox.CurrentCell.RowIndex < (this.matchingBox.Rows.Count - 1))
+            }else if (e.KeyCode == Keys.Down && this.matchingBox.CurrentCell.RowIndex < (this.matchingBox.Rows.Count - 1))
             {
                 this.matchingBox.CurrentCell = this.matchingBox.Rows[selected + 1].Cells[0];
-                return;
-            }
-            
-            if (e.KeyCode == Keys.Up && this.matchingBox.Rows.Count > 0 && this.matchingBox.CurrentCell.RowIndex > 0)
+            }else if (e.KeyCode == Keys.Up && this.matchingBox.Rows.Count > 0 && this.matchingBox.CurrentCell.RowIndex > 0)
             {
                 this.matchingBox.CurrentCell = this.matchingBox.Rows[selected - 1].Cells[0];
-                return;
-            }
-            
-            if (e.KeyCode == Keys.Escape)
+            }else if (e.KeyCode == Keys.Escape)
             {
                 this.Visible = false;
                 this.Opacity = 0;
-                return;
             }
         }
 
@@ -162,6 +152,7 @@ namespace Sprung
             {
                 int selected = this.matchingBox.CurrentRow.Index;
                 Window window = windowManager.getProcesses()[selected];
+                if(window != null) Console.WriteLine(window.getProcessTitle());
                 this.Visible = false;
                 this.Opacity = 0;
                 this.windowManager.sendWindowToFront(window);
