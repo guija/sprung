@@ -55,6 +55,7 @@ namespace Sprung
             this.matchingBox.CellBorderStyle = DataGridViewCellBorderStyle.None;
             this.matchingBox.ColumnHeadersVisible = false;
             this.matchingBox.RowHeadersVisible = false;
+            this.matchingBox.ClearSelection(); // ?
 
             SprungLayout layout = new SprungLayout(matchingBox);
             layout.addImageColumn("", 32);
@@ -107,7 +108,7 @@ namespace Sprung
                 this.searchBox.Focus();
                 this.searchBox.Text = "";
                 this.windowManager.loadProcesses();
-                showProcesses(windowManager.getProcesses());
+                showProcesses(windowMatcher.getSortedWindows());
             }
             base.WndProc(ref m);
         }
@@ -150,7 +151,9 @@ namespace Sprung
             if (this.matchingBox.Rows.Count > 0)
             {
                 int selected = this.matchingBox.CurrentRow.Index;
+                Console.WriteLine(selected);
                 Window window = windowMatcher.getSortedWindows()[selected];
+                Console.WriteLine(window.getProcessTitle());
                 this.Visible = false;
                 this.Opacity = 0;
                 this.windowManager.sendWindowToFront(window);

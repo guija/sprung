@@ -18,7 +18,11 @@ namespace Sprung
         private List<String> eProcesses = new List<String>() { 
             "", 
             "Jumper", 
-            "Program Manager" 
+            "Program Manager",
+            "TeamViewer",
+            "TeamViewer Panel",
+            "TeamViewer Panel (minimiert)",
+            "Computer & Kontakte"
         };
 
         public void loadProcesses()

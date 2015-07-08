@@ -17,6 +17,8 @@ namespace Sprung
 
         public List<Window> getMatchedProcesses(String pattern)
         {
+            if (pattern.Equals("")) return this.windows;
+
             List<Window> windows = new List<Window>();
             foreach (Window window in this.windowManager.getProcesses())
             {
