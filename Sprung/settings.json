@@ -2,8 +2,9 @@
 	"excluded": [
 		"^$",
 		"^Sprung$",
-		"^Program Manager - Explorer$"
+		"^Program Manager - Explorer$",
+		"^Task Manager$"
 	],
-	"list_tabs_as_windows": false,
+	"list_tabs_as_windows": true,
 	"open_window_list" : "Alt+Space"
 }

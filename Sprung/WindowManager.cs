@@ -47,11 +47,7 @@ namespace Sprung
                 {
                     if (settings.isListTabsAsWindows() && window.getProcessName() == "firefox")
                     {
-                        // TODO
-                        // iterate over tabs
-                        // add tabs as windows to windows list
-                        // create derived window class "FirefoxTabProxyWindow"
-                        getFirefoxTabs(window);
+                        windows.AddRange(getFirefoxTabs(window));
                     }
                     else
                     {
@@ -68,7 +64,6 @@ namespace Sprung
             List<Window> tabs = new List<Window>();
             
             // firefox test
-            /*
             Process firefoxProcess = firefoxWindow.getProcess();
             AutomationElement rootElement = AutomationElement.FromHandle(firefoxProcess.MainWindowHandle);
 
@@ -79,22 +74,30 @@ namespace Sprung
             AutomationElement browserTabsToolBarGroup = TreeWalker.ControlViewWalker.GetFirstChild(browserTabsToolBar);
             //Console.WriteLine("browserTabsToolBarGroup = " + browserTabsToolBarGroup.Current.Name);
 
-            List<AutomationElement> tabsAutomationElements = new List<AutomationElement>();
-            */
-
             // iterate over tabs
-            /*
+            int tabIndex = 0;
+            int currentTabIndex = 0;
             AutomationElement tab = TreeWalker.ControlViewWalker.GetFirstChild(browserTabsToolBarGroup);
-            while (tab != null)
-                String tabname = tab.Current.Name;
-                if (tabname != "")
+            while (tab != null) 
+            {
+                String title = tab.Current.Name;
+                if (title != "")
                 {
-                    tabsAutomationElements.Add(tab);
-                    Console.WriteLine("tab = " + tabname);
+                    if (firefoxWindow.getTitle() == title + " - Mozilla Firefox")
+                    {
+                        currentTabIndex = tabIndex;
+                    }
+                    Window tabWindow = new FirefoxTabWindow(firefoxWindow.getHandle(), 0, tabIndex, title);
+                    tabs.Add(tabWindow);
+                    tabIndex++;
                 }
                 tab = TreeWalker.ControlViewWalker.GetNextSibling(tab);
             }
-            */
+
+            foreach (FirefoxTabWindow window in tabs)
+            {
+                window.currentTabIndex = currentTabIndex;
+            }
 
             return tabs;
 

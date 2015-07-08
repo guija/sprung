@@ -12,11 +12,11 @@ namespace Sprung
     {
 
         private const int WINDOW_TITLE_MAX_CHARS = 255;
-        private IntPtr handle;
-        private String processName;
-        private String title;
-        private Boolean noTitle = false;
-        private Process process;
+        protected IntPtr handle;
+        protected String processName;
+        protected String title;
+        protected Boolean noTitle = false;
+        protected Process process;
 
         int matchingPriority;
         int matchingGroups;
@@ -48,7 +48,7 @@ namespace Sprung
             }
         }
 
-        public void SendToFront()
+        public virtual void SendToFront()
         {
             // TODO: First show / resize / position bug has to be somewhere here
             uint foreThread = GetWindowThreadProcessId(GetForegroundWindow(), IntPtr.Zero);

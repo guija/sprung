@@ -89,6 +89,7 @@
     <Reference Include="UIAutomationTypes" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="FirefoxTabWindow.cs" />
     <Compile Include="Settings.cs" />
     <Compile Include="WindowListBox.cs">
       <SubType>Component</SubType>

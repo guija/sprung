@@ -10,44 +10,50 @@ namespace Sprung
 {
     public class WindowListBox : ListBox
     {
+
+        private const int iconSize = 30;
+        private const int newItemHeight = 36;
+        private int iconMargin = 0;
+        private Font titleFont = new Font("Arial", 10.0f, FontStyle.Regular);
+        private Font processFont = new Font("Arial", 9.0f, FontStyle.Regular);
+        private TextFormatFlags titleFlags = TextFormatFlags.Left | TextFormatFlags.Bottom;
+        private TextFormatFlags processFlags = TextFormatFlags.Left | TextFormatFlags.Top;
+
         public WindowListBox()
         {
             this.DrawMode = DrawMode.OwnerDrawVariable;
-            this.ItemHeight = 24;
+            iconMargin = (newItemHeight - iconSize) / 2;
+            this.ItemHeight = newItemHeight;
         }
 
         protected override void OnDrawItem(DrawItemEventArgs e)
         {
-            const TextFormatFlags flags = TextFormatFlags.Left | TextFormatFlags.VerticalCenter;
             if (e.Index >= 0 && e.Index < Items.Count)
             {
-                this.ItemHeight = 24;
+                this.ItemHeight = newItemHeight;
                 Window window = Items[e.Index] as Window;
-                String text = window.getTitle();
-                text = text.Length > 60 ? text.Substring(0, 60) + "..." : text;
-                String processFileName = null;
-                try
-                {
-                    processFileName = window.getProcess().MainModule.FileName;
-                }
-                catch (Exception exception)
-                {
-                    Console.Error.WriteLine(exception);
-                    return;
-                }
+                String title = window.getTitle();
+                String processName = window.getProcessName();
 
-                
                 e.DrawBackground();
-                // Get icon from process, resize it and draw it
+
+                // Draw icon
+                String processFileName = window.getProcess().MainModule.FileName;
                 Icon icon = Icon.ExtractAssociatedIcon(processFileName);
-                Image image = (Image)new Bitmap(icon.ToBitmap(), new Size(20, 20));
-                e.Graphics.DrawImage(image, 2, e.Bounds.Y + 2);
+                Image image = (Image)new Bitmap(icon.ToBitmap(), new Size(iconSize, iconSize));
+                e.Graphics.DrawImage(image, iconMargin, e.Bounds.Y + iconMargin);
+     
                 // Draw window title
-                var textRect = e.Bounds;
-                textRect.X += 24;
-                textRect.Width -= 20;
-                Font font = new Font("Arial", 12.0f, FontStyle.Regular);
-                TextRenderer.DrawText(e.Graphics, text, font, textRect, e.ForeColor, flags);
+                Rectangle titleRect = e.Bounds;
+                titleRect.Height /= 2;
+                titleRect.X += iconSize + 3 * iconMargin;
+                titleRect.Width -= iconSize + 3 * iconMargin;
+                TextRenderer.DrawText(e.Graphics, title, titleFont, titleRect, e.ForeColor, titleFlags);
+
+                // Draw process name title
+                Rectangle processRect = titleRect;
+                processRect.Y += processRect.Height;
+                TextRenderer.DrawText(e.Graphics, processName, processFont, processRect, e.ForeColor, processFlags);
                 e.DrawFocusRectangle();
             }
         }
