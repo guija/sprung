@@ -32,8 +32,8 @@ namespace Sprung
             {
                 this.ItemHeight = newItemHeight;
                 Window window = Items[e.Index] as Window;
-                String title = window.getTitle();
-                String processName = window.getProcessName();
+                String title = window.getTitle().Replace("&", "&&");
+                String processName = window.getProcessName().Replace("&", "&&");
 
                 e.DrawBackground();
 
