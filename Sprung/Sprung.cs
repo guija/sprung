@@ -19,6 +19,7 @@ namespace Sprung
         private WindowMatcher windowMatcher = null;
         private Window mainWindow = null;
         private Settings settings = null;
+        private List<Window> cachedWindows = null;
 
         const int MOD_ALT = 0x0001;
         const int MOD_CONTROL = 0x0002;
@@ -65,7 +66,7 @@ namespace Sprung
         private void inputChangedCallback(object sender, EventArgs e)
         {
             String pattern = searchBox.Text;
-            showProcesses(windowMatcher.getMatchedProcesses(pattern));
+            showProcesses(windowMatcher.match(pattern, cachedWindows));
         }
 
         private void showProcesses(List<Window> windows)
@@ -92,7 +93,8 @@ namespace Sprung
                 this.Activate();
                 this.searchBox.Focus();
                 this.searchBox.Text = "";
-                showProcesses(windowManager.getProcesses());
+                this.cachedWindows = windowManager.getProcesses();
+                showProcesses(this.cachedWindows);
             }
             base.WndProc(ref m);
         }
