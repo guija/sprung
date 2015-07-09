@@ -50,21 +50,18 @@ namespace Sprung
 
         public virtual void SendToFront()
         {
-            // TODO: First show / resize / position bug has to be somewhere here
-            uint foreThread = GetWindowThreadProcessId(GetForegroundWindow(), IntPtr.Zero);
-            uint appThread = GetCurrentThreadId();
+            const uint SW_SHOWMAXIMIZED = 3;
             const uint SW_SHOW = 5;
             const uint SW_RESTORE = 9;
+            uint foreThread = GetWindowThreadProcessId(GetForegroundWindow(), IntPtr.Zero);
+            uint appThread = GetCurrentThreadId();
             AttachThreadInput(foreThread, appThread, true);
             Application.DoEvents();
-            if (IsIconic(this.handle))
-            {
-                ShowWindow(this.handle, SW_RESTORE);
-            }
-            else
-            {
-                ShowWindow(this.handle, SW_SHOW);
-            }
+            WINDOWPLACEMENT p = GetPlacement(this.handle);
+            if (p.showCmd == ShowWindowCommands.Maximized) ShowWindow(this.handle, SW_SHOWMAXIMIZED);
+            else if (p.showCmd == ShowWindowCommands.Minimized) ShowWindow(this.handle, SW_RESTORE);
+            else if (p.showCmd == ShowWindowCommands.Normal) ShowWindow(this.handle, SW_SHOW);
+            else ShowWindow(this.handle, SW_SHOW);
             BringWindowToTop(this.handle);
             SetForegroundWindow(this.handle.ToInt32());
             AttachThreadInput(foreThread, appThread, false);
@@ -176,5 +173,40 @@ namespace Sprung
 
         [DllImport("user32.dll")]
         static extern bool IsIconic(IntPtr hWnd);
+
+        // window placement test
+        [DllImport("user32.dll", SetLastError = true)]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        internal static extern bool GetWindowPlacement(
+            IntPtr hWnd, ref WINDOWPLACEMENT lpwndpl);
+
+        [Serializable]
+        [StructLayout(LayoutKind.Sequential)]
+        internal struct WINDOWPLACEMENT
+        {
+            public int length;
+            public int flags;
+            public ShowWindowCommands showCmd;
+            public System.Drawing.Point ptMinPosition;
+            public System.Drawing.Point ptMaxPosition;
+            public System.Drawing.Rectangle rcNormalPosition;
+        }
+
+        internal enum ShowWindowCommands : int
+        {
+            Hide = 0,
+            Normal = 1,
+            Minimized = 2,
+            Maximized = 3,
+        }
+
+        private static WINDOWPLACEMENT GetPlacement(IntPtr hwnd)
+        {
+            WINDOWPLACEMENT placement = new WINDOWPLACEMENT();
+            placement.length = Marshal.SizeOf(placement);
+            GetWindowPlacement(hwnd, ref placement);
+            return placement;
+        }
+
     }
 }
