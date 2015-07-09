@@ -44,6 +44,10 @@ namespace Sprung
                     {
                         windows.AddRange(getFirefoxTabs(window));
                     }
+                    else if (settings.isListTabsAsWindows() && window.getProcessName() == "iexplore")
+                    {
+                        windows.AddRange(getIETabs(window));
+                    }
                     else
                     {
                         windows.Add(window);
@@ -82,6 +86,21 @@ namespace Sprung
                 w.currentTabIndex = currentTabIndex;
             }
             return tabs;              
+        }
+
+        public List<Window> getIETabs(Window ieWindow) {
+            List<Window> tabs = new List<Window>();
+            foreach (SHDocVw.InternetExplorer tab in new SHDocVw.ShellWindows())
+            {
+                if (!tab.LocationURL.StartsWith("file"))
+                {
+                    Console.WriteLine(tab.LocationName);
+                    Console.WriteLine(tab.LocationURL);
+                    Console.WriteLine(tab.Visible);
+                    tabs.Add(new IETabWindow(tab));
+                }
+            }
+            return tabs;
         }
 
         private delegate bool EnumDelegate(IntPtr hWnd, int lParam);

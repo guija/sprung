@@ -11,7 +11,10 @@ namespace Sprung
     class Window : IComparable<Window>
     {
 
-        private const int WINDOW_TITLE_MAX_CHARS = 255;
+        protected const uint SW_SHOWMAXIMIZED = 3;
+        protected const uint SW_SHOW = 5;
+        protected const uint SW_RESTORE = 9;
+        protected const int WINDOW_TITLE_MAX_CHARS = 255;
         protected IntPtr handle;
         protected String processName;
         protected String title;
@@ -50,9 +53,6 @@ namespace Sprung
 
         public virtual void SendToFront()
         {
-            const uint SW_SHOWMAXIMIZED = 3;
-            const uint SW_SHOW = 5;
-            const uint SW_RESTORE = 9;
             uint foreThread = GetWindowThreadProcessId(GetForegroundWindow(), IntPtr.Zero);
             uint appThread = GetCurrentThreadId();
             AttachThreadInput(foreThread, appThread, true);
