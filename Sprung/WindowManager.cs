@@ -94,9 +94,9 @@ namespace Sprung
             {
                 if (!tab.LocationURL.StartsWith("file"))
                 {
-                    Console.WriteLine(tab.LocationName);
                     Console.WriteLine(tab.LocationURL);
-                    Console.WriteLine(tab.Visible);
+                    Console.WriteLine("visible = " + tab.Visible);
+                    Console.WriteLine("hasFocus = " + ((mshtml.HTMLDocument)tab.Document).hasFocus());
                     tabs.Add(new IETabWindow(tab));
                 }
             }
