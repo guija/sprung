@@ -70,15 +70,16 @@ namespace Sprung
             StreamReader streamReader = new StreamReader(file);
             String content = streamReader.ReadToEnd();
             JObject data = JObject.Parse(content);
-            int currentTabIndex = (int)data["windows"][0]["selected"] - 1;
-
-            int i = 0;
+            int currentTabIndex = 0, i = 0;
             foreach (JObject tab in data["windows"][0]["tabs"])
             {
-                JArray entries = (JArray)tab["entries"];
-                JObject currentEntry = (JObject)entries.Last;
-                String title = (String)currentEntry["title"];
+                String title = (String) tab["entries"].Last["title"];
+                title += " - Mozilla Firefox";
+                currentTabIndex = title == firefoxWindow.getTitle() ? i : currentTabIndex;
                 tabs.Add(new FirefoxTabWindow(firefoxWindow.getHandle(), currentTabIndex, i++, title));
+            }
+            foreach(FirefoxTabWindow w in tabs) {
+                w.currentTabIndex = currentTabIndex;
             }
             return tabs;              
         }
