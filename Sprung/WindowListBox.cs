@@ -18,6 +18,7 @@ namespace Sprung
         private Font processFont = new Font("Arial", 9.0f, FontStyle.Regular);
         private TextFormatFlags titleFlags = TextFormatFlags.Left | TextFormatFlags.Bottom;
         private TextFormatFlags processFlags = TextFormatFlags.Left | TextFormatFlags.Top;
+        private Color processColor = Color.FromArgb(110, 110, 110);
 
         public WindowListBox()
         {
@@ -53,7 +54,7 @@ namespace Sprung
                 // Draw process name title
                 Rectangle processRect = titleRect;
                 processRect.Y += processRect.Height;
-                TextRenderer.DrawText(e.Graphics, processName, processFont, processRect, e.ForeColor, processFlags);
+                TextRenderer.DrawText(e.Graphics, processName, processFont, processRect, processColor, processFlags);
                 e.DrawFocusRectangle();
             }
         }
