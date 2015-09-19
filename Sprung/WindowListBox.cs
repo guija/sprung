@@ -27,7 +27,7 @@ namespace Sprung
             iconMargin = (newItemHeight - iconSize) / 2;
             this.ItemHeight = newItemHeight;
         }
-
+        
         protected override void OnDrawItem(DrawItemEventArgs e)
         {
             if (e.Index >= 0 && e.Index < Items.Count)
@@ -40,16 +40,13 @@ namespace Sprung
                 e.DrawBackground();
 
                 // Draw icon
-                try
+                Icon icon = window.getIcon();
+                if (icon != null)
                 {
-                    String processFileName = window.getProcess().MainModule.FileName;
-                    Icon icon = Icon.ExtractAssociatedIcon(processFileName);
                     Image image = (Image)new Bitmap(icon.ToBitmap(), new Size(iconSize, iconSize));
                     e.Graphics.DrawImage(image, iconMargin, e.Bounds.Y + iconMargin);
                 }
-                catch (Win32Exception)
-                { }
-     
+
                 // Draw window title
                 Rectangle titleRect = e.Bounds;
                 titleRect.Height /= 2;

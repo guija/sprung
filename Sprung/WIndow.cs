@@ -5,6 +5,8 @@ using System.Text;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
+using System.Drawing;
+using System.ComponentModel;
 
 namespace Sprung
 {
@@ -20,6 +22,8 @@ namespace Sprung
         protected String title;
         protected Boolean noTitle = false;
         protected Process process;
+        protected Icon icon = null;
+        protected bool isIconQueried = false;
 
         int matchingPriority;
         int matchingGroups;
@@ -123,6 +127,24 @@ namespace Sprung
         {
             return (getMatchingPriority() < other.getMatchingPriority()) ? 1 : (getMatchingPriority() > other.getMatchingPriority()) ? -1 :
                 (getMatchingGroups() < other.getMatchingGroups()) ? -1 : (getMatchingGroups() > other.getMatchingGroups()) ? 1 : 0;
+        }
+
+        public Icon getIcon()
+        {
+            if (!isIconQueried)
+            {
+                try
+                {
+                    String processFileName = getProcess().MainModule.FileName;
+                    icon = Icon.ExtractAssociatedIcon(processFileName);
+                }
+                catch (Win32Exception)
+                {
+                    icon = null;
+                }
+                isIconQueried = true;
+            }
+            return icon;
         }
 
         private delegate bool EnumDelegate(IntPtr hWnd, int lParam);

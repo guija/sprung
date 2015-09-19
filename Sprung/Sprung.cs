@@ -71,11 +71,10 @@ namespace Sprung
 
         private void showProcesses(List<Window> windows)
         {
+            windowListBox.BeginUpdate();
             windowListBox.Items.Clear();
-            foreach (Window w in windows)
-            {
-                windowListBox.Items.Add(w);
-            }
+            windowListBox.Items.AddRange(windows.ToArray());
+            windowListBox.EndUpdate();
             if (windowListBox.Items.Count > 0)
             {
                 windowListBox.SelectedIndex = 0;
@@ -104,7 +103,7 @@ namespace Sprung
             if (this.windowListBox.Items.Count == 0) return;
             if (e.KeyCode == Keys.Enter)
             {
-                this.Visible = false;
+                HideBox();
                 sendSelectedWindowToFront();
             } 
             else if (e.KeyCode == Keys.Down && this.windowListBox.SelectedIndex < (this.windowListBox.Items.Count - 1))
@@ -117,8 +116,7 @@ namespace Sprung
             }
             else if (e.KeyCode == Keys.Escape)
             {
-                this.Visible = false;
-                this.Opacity = 0;
+                HideBox();
             }
         }
 
@@ -130,14 +128,17 @@ namespace Sprung
             }
         }
 
+        private void HideBox()
+        {
+            // hide main window
+            this.Visible = true;
+            this.Opacity = 0;
+        }
 
         private void sendSelectedWindowToFront()
         {
             if (this.windowListBox.Items.Count > 0)
             {
-                // hide main window
-                this.Visible = false;
-                this.Opacity = 0;
                 // show window that was selected
                 int selectedIndex = this.windowListBox.SelectedIndex;
                 selectedIndex = selectedIndex == -1 ? 0 : selectedIndex;
