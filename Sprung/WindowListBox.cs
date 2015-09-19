@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.ComponentModel;
 
 namespace Sprung
 {
@@ -39,10 +40,15 @@ namespace Sprung
                 e.DrawBackground();
 
                 // Draw icon
-                String processFileName = window.getProcess().MainModule.FileName;
-                Icon icon = Icon.ExtractAssociatedIcon(processFileName);
-                Image image = (Image)new Bitmap(icon.ToBitmap(), new Size(iconSize, iconSize));
-                e.Graphics.DrawImage(image, iconMargin, e.Bounds.Y + iconMargin);
+                try
+                {
+                    String processFileName = window.getProcess().MainModule.FileName;
+                    Icon icon = Icon.ExtractAssociatedIcon(processFileName);
+                    Image image = (Image)new Bitmap(icon.ToBitmap(), new Size(iconSize, iconSize));
+                    e.Graphics.DrawImage(image, iconMargin, e.Bounds.Y + iconMargin);
+                }
+                catch (Win32Exception)
+                { }
      
                 // Draw window title
                 Rectangle titleRect = e.Bounds;
