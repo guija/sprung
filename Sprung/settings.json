@@ -2,8 +2,9 @@
 	"excluded": [
 		"^$",
 		"^Sprung$",
-		"^Program Manager - Explorer$",
-		"^Task Manager$"
+		"^Program Manager - explorer$",
+		"^Start - explorer$",
+		"^AMD:CCC-AEMCapturingWindow$"
 	],
 	"list_tabs_as_windows": false,
 	"open_window_list" : "Alt+Space"
