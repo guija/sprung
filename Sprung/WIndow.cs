@@ -48,9 +48,9 @@ namespace Sprung
                 this.title = strbTitle.ToString();
                 this.noTitle = this.title.Length == 0;
                 // Fix the name of some processes
-                if (this.processName == "explorer")
+                if(!this.title.ToLower().Contains(this.processName.ToLower()))
                 {
-                    this.title += " - Explorer";
+                    this.title += String.Format(" - {0}", this.processName);
                 }
             }
         }
