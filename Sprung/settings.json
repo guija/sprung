@@ -5,6 +5,6 @@
 		"^Program Manager - Explorer$",
 		"^Task Manager$"
 	],
-	"list_tabs_as_windows": true,
+	"list_tabs_as_windows": false,
 	"open_window_list" : "Alt+Space"
 }
