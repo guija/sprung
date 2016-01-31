@@ -5,6 +5,7 @@
 		"^Program Manager - explorer$",
 		"^Start - explorer$",
 		"^AMD:CCC-AEMCapturingWindow$"
+		"^Windows Shell Experience Host - ShellExperienceHost$"
 	],
 	"list_tabs_as_windows": false,
 	"open_window_list" : "Alt+Space"
