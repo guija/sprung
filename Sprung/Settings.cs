@@ -19,7 +19,7 @@ namespace Sprung
         private KeysConverter keysConverter = new KeysConverter();
         private List<Regex> excludedPatterns = new List<Regex>();
         private Boolean listTabsAsWindows = false;
-        private Keys shortcut;
+        private Keys shortcut = Keys.Alt | Keys.Space;
         private JObject settings;
 
         public Settings()
@@ -28,24 +28,32 @@ namespace Sprung
         }
 
         public void load() {
-            StreamReader streamReader = new StreamReader(path);
-            String content = streamReader.ReadToEnd();
-            settings = JObject.Parse(content);
-            if(settings["excluded"] != null) {
-                foreach(string pattern in settings["excluded"]) {
-                    excludedPatterns.Add(new Regex(pattern));
+            try
+            {
+                StreamReader streamReader = new StreamReader(path);
+                String content = streamReader.ReadToEnd();
+                settings = JObject.Parse(content);
+                if (settings["excluded"] != null)
+                {
+                    foreach (string pattern in settings["excluded"])
+                    {
+                        excludedPatterns.Add(new Regex(pattern));
+                    }
+                }
+                if (settings["list_tabs_as_windows"] != null)
+                {
+                    listTabsAsWindows = (Boolean)settings["list_tabs_as_windows"];
+                }
+                if (settings["open_window_list"] != null)
+                {
+                    String shortcutAsString = (String)settings["open_window_list"];
+                    this.shortcut = (Keys)keysConverter.ConvertFrom(shortcutAsString);
                 }
             }
-            if (settings["list_tabs_as_windows"] != null)
+            catch (Exception e)
             {
-                listTabsAsWindows = (Boolean) settings["list_tabs_as_windows"];
+                MessageBox.Show("Error while loading settings from settings.json file: " + e.Message, "Sprung settings error");
             }
-            if (settings["open_window_list"] != null)
-            {
-                String shortcutAsString = (String) settings["open_window_list"];
-                this.shortcut = (Keys) keysConverter.ConvertFrom(shortcutAsString);
-            }
-            Console.WriteLine("Settings reloaded");
         }
 
         public void save()
