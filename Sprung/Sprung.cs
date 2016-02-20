@@ -49,6 +49,7 @@ namespace Sprung
 
         public void initShortcut()
         {
+            // Init normal shortcut
             int modifiers = (int)(Keys.Modifiers & settings.getShortcut());
             int keyCode = (int)(Keys.KeyCode & settings.getShortcut());
             int transformedModifier = 0x0;
@@ -56,11 +57,20 @@ namespace Sprung
             if ((modifiers & (int)Keys.Alt) > 0) transformedModifier |= MOD_ALT;
             if ((modifiers & (int)Keys.Shift) > 0) transformedModifier |= MOD_SHIFT; ;
             RegisterHotKey(this.Handle, 1, transformedModifier, keyCode);
+            // Init shortcut with tabs included
+            modifiers = (int)(Keys.Modifiers & settings.getShortcutWithTabs());
+            keyCode = (int)(Keys.KeyCode & settings.getShortcutWithTabs());
+            transformedModifier = 0x0;
+            if ((modifiers & (int)Keys.Control) > 0) transformedModifier |= MOD_CONTROL;
+            if ((modifiers & (int)Keys.Alt) > 0) transformedModifier |= MOD_ALT;
+            if ((modifiers & (int)Keys.Shift) > 0) transformedModifier |= MOD_SHIFT; ;
+            RegisterHotKey(this.Handle, 2, transformedModifier, keyCode);
         }
 
         private void exitCallback(object sender, EventArgs e)
         {
             UnregisterHotKey(this.Handle, 1);
+            UnregisterHotKey(this.Handle, 2);
             Application.Exit();
         }
 
@@ -94,6 +104,18 @@ namespace Sprung
                 this.searchBox.Focus();
                 this.searchBox.Text = "";
                 this.cachedWindows = windowManager.getProcesses();
+                showProcesses(this.cachedWindows);
+            }
+            if (m.Msg == WM_HOTKEY && (int)m.WParam == 2)
+            {
+                this.Visible = true;
+                this.Opacity = 100;
+                this.CenterToScreen();
+                this.mainWindow.SendToFront();
+                this.Activate();
+                this.searchBox.Focus();
+                this.searchBox.Text = "";
+                this.cachedWindows = windowManager.getProcesses(true);
                 showProcesses(this.cachedWindows);
             }
             base.WndProc(ref m);

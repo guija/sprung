@@ -16,6 +16,7 @@ namespace Sprung
 
         private Settings settings;
         private List<Window> windows = new List<Window>();
+        private bool showTabs = false;
 
         public WindowManager(Settings settings)
         {
@@ -34,17 +35,25 @@ namespace Sprung
             return windows;
         }
 
+        public List<Window> getProcesses(bool showTabs)
+        {
+            this.showTabs = showTabs;
+            List<Window> windows = getProcesses();
+            this.showTabs = false;
+            return windows;
+        }
+
         private bool EnumWindowsProc(IntPtr hWnd, int lParam)
         {
             if (IsWindowVisible(hWnd)) {
                 Window window = new Window(hWnd);
                 if (!settings.isWindowTitleExcluded(window.getTitle()) && !window.hasNoTitle())
                 {
-                    if (settings.isListTabsAsWindows() && window.getProcessName() == "firefox")
+                    if ((showTabs || settings.isListTabsAsWindows()) && window.getProcessName() == "firefox")
                     {
                         windows.AddRange(getFirefoxTabs(window));
                     }
-                    else if (settings.isListTabsAsWindows() && window.getProcessName() == "iexplore")
+                    else if ((showTabs || settings.isListTabsAsWindows()) && window.getProcessName() == "iexplore")
                     {
                         windows.AddRange(getIETabs(window));
                     }

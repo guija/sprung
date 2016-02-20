@@ -20,6 +20,7 @@ namespace Sprung
         private List<Regex> excludedPatterns = new List<Regex>();
         private Boolean listTabsAsWindows = false;
         private Keys shortcut = Keys.Alt | Keys.Space;
+        private Keys shortcutWithTabs = Keys.Alt | Keys.Shift | Keys.Space;
         private JObject settings;
 
         public Settings()
@@ -48,6 +49,12 @@ namespace Sprung
                 {
                     String shortcutAsString = (String)settings["open_window_list"];
                     this.shortcut = (Keys)keysConverter.ConvertFrom(shortcutAsString);
+                }
+                if (settings["open_window_list_with_tabs"] != null)
+                {
+                    String shortcutAsString = (String)settings["open_window_list_with_tabs"];
+                    shortcutAsString = shortcutAsString.Replace("+", ",");
+                    this.shortcutWithTabs = (Keys)Enum.Parse(typeof(Keys), shortcutAsString);
                 }
             }
             catch (Exception e)
@@ -113,6 +120,11 @@ namespace Sprung
         public Keys getShortcut()
         {
             return this.shortcut;
+        }
+
+        public Keys getShortcutWithTabs()
+        {
+            return this.shortcutWithTabs;
         }
     }
 }
