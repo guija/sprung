@@ -48,7 +48,8 @@ namespace Sprung
                 if (settings["open_window_list"] != null)
                 {
                     String shortcutAsString = (String)settings["open_window_list"];
-                    this.shortcut = (Keys)keysConverter.ConvertFrom(shortcutAsString);
+                    shortcutAsString = shortcutAsString.Replace("+", ",");
+                    this.shortcut = (Keys)Enum.Parse(typeof(Keys), shortcutAsString);
                 }
                 if (settings["open_window_list_with_tabs"] != null)
                 {
