@@ -39,6 +39,7 @@ namespace Sprung
             this.ShowInTaskbar = false;
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
             this.mainWindow = new Window(this.Handle);
+            this.Deactivate += DeactivateCallback;
         }
 
         private void loadCallback(object sender, EventArgs e)
@@ -145,6 +146,12 @@ namespace Sprung
                 Window selectedWindow = (Window) this.windowListBox.Items[selectedIndex];
                 selectedWindow.SendToFront();
             }
+        }
+
+        // Hides window when the main windows loses the focus
+        private void DeactivateCallback(object sender, EventArgs e)
+        {
+            this.HideBox();
         }
 
         [DllImport("user32.dll")]
