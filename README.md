@@ -22,7 +22,9 @@ There are only two shortcuts available:
 `Ctrl+Shift+Space`: Open Sprung Window Switcher and list tabs for each browser as own windows  
 
 ## Tabs support
-Please note that the tabs support is currently in alpha stadium and is available for test purposes only.
+Please note that the tabs support is currently in alpha stadium and is available for test purposes only. Currently supported browsers are:
+* Firefox
+* Internet Explorer
 
 ## Settings
 The settings can be modified by changing the `settings.json` file.  
