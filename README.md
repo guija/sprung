@@ -4,13 +4,15 @@ Windows are searched by it's window title. The search algorithm is inspired by t
 Sprung is intended to be used only with the keyboard. Therefore the UI is deliberately simple.  
 
 ## Download
-You can download sprung from http://sprung.netzauftrag.com/releases/
+You can download the Sprung installer from http://sprung.netzauftrag.com/releases/  
 
 ## Installation
-At the moment there is no installer available. Just extract the zip archive and start Sprung.exe.  
+Download the installer of the most recent version from http://sprung.netzauftrag.com/releases/  
+Run the installer. The installer will create a shorcut on your desktop. Start Sprung by clicking on that shortcut.
 Enjoy by using the default keyboard shortcut `Alt+Space`  
 You can configure the shortcut yourself (See Settings below)  
-If you want Sprung to be launched on every system startup just put a shorcut in your startup folder. (You can open your startup folder by typing `Win+R` -> `shell:startup` -> `Enter`)
+
+If you want Sprung to be launched on every system startup just put a copy of the shorcut in your startup folder. (You can open your startup folder by typing `Win+R` -> `shell:startup` -> `Enter`)
 
 ## Demo
 Here is a simple demo of how Sprung works:  
