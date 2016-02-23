@@ -1,13 +1,13 @@
 {
-	"excluded": [
-		"^$",
-		"^Sprung$",
-		"^Program Manager - explorer$",
-		"^Start - explorer$",
-		"^AMD:CCC-AEMCapturingWindow$",
-		"^Windows Shell Experience Host - ShellExperienceHost$"
-	],
-	"list_tabs_as_windows": false,
-  "open_window_list": "Alt+Space",
-  "open_window_list_with_tabs" : "Alt+Shift+Space"
+    "excluded": [
+    "^$",
+    "^Sprung$",
+    "^Program Manager - explorer$",
+    "^Start - explorer$",
+    "^AMD:CCC-AEMCapturingWindow$",
+    "^Windows Shell Experience Host - ShellExperienceHost$"
+    ],
+    "list_tabs_as_windows": false,
+    "open_window_list": "Alt+Space",
+    "open_window_list_with_tabs" : "Alt+Shift+Space"
 }
