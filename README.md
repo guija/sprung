@@ -8,7 +8,7 @@ You can download sprung from http://sprung.netzauftrag.com/releases/
 
 ## Installation
 At the moment there is no installer available. Just extract the zip archive and start Sprung.exe.  
-Enjoy by using the default keyboard shortcut `Ctrl+Space`  
+Enjoy by using the default keyboard shortcut `Alt+Space`  
 You can configure the shortcut yourself (See Settings below)  
 If you want Sprung to be launched on every system startup just put a shorcut in your startup folder. (You can open your startup folder by typing `Win+R` -> `shell:startup` -> `Enter`)
 
@@ -18,8 +18,8 @@ Here is a simple demo of how Sprung works:
 
 ## Shortcuts
 There are only two shortcuts available:  
-`Ctrl+Space`: Open Sprung Window Switcher  
-`Ctrl+Shift+Space`: Open Sprung Window Switcher and list tabs for each browser as own windows  
+`Alt+Space`: Open Sprung Window Switcher  
+`Alt+Shift+Space`: Open Sprung Window Switcher and list tabs for each browser as own windows  
 
 ## Tabs support
 Please note that the tabs support is currently in alpha stadium and is available for test purposes only. Currently supported browsers are:
