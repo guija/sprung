@@ -40,6 +40,17 @@ namespace Sprung
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
             this.mainWindow = new Window(this.Handle);
             this.Deactivate += DeactivateCallback;
+            this.KeyPreview = true;
+            this.KeyDown += GlobalKeyDown;
+        }
+
+        private void GlobalKeyDown(object sender, KeyEventArgs e)
+        {
+            Debug.WriteLine("GlobalKeyDown");
+            if (e.KeyCode == Keys.Escape)
+            {
+                HideBox();
+            }
         }
 
         private void loadCallback(object sender, EventArgs e)
@@ -136,10 +147,6 @@ namespace Sprung
             else if (e.KeyCode == Keys.Up && this.windowListBox.Items.Count > 0 && this.windowListBox.SelectedIndex > 0)
             {
                 this.windowListBox.SelectedIndex--;
-            }
-            else if (e.KeyCode == Keys.Escape)
-            {
-                HideBox();
             }
         }
 
