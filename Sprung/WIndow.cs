@@ -138,9 +138,9 @@ namespace Sprung
                     String processFileName = getProcess().MainModule.FileName;
                     icon = Icon.ExtractAssociatedIcon(processFileName);
                 }
-                catch (Win32Exception)
+                catch (Exception)
                 {
-                    icon = null;
+                    icon = SystemIcons.Application;
                 }
                 isIconQueried = true;
             }
