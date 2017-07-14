@@ -4,10 +4,6 @@ before_build:
 build:
   verbosity: normal
   project: Sprung\Sprung.csproj
-  
-artifacts:
-  - path: '**\*.exe'
-    name: exe
     
 after_build:
   - cmd: '"C:\Program Files (x86)\Microsoft Visual Studio 14.0\Common7\IDE\devenv.exe" SprungSetup\SprungSetup.vdproj /Build Debug'
