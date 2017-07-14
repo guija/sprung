@@ -3,7 +3,7 @@ before_build:
 
 build:
   verbosity: normal
-  project: Sprung\Sprung.sln
+  project: Sprung\Sprung.csproj
   
 after_build:
   - cmd: '"C:\Program Files (x86)\Microsoft Visual Studio 14.0\Common7\IDE\devenv.exe" SprungSetup\SprungSetup.vdproj /Build Debug'
