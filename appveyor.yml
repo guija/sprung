@@ -7,6 +7,7 @@ build:
 
 artifacts:
   - path: '**\*.exe'
+    name: 'Sprung'
     
 after_build:
   - cmd: '"C:\Program Files (x86)\Microsoft Visual Studio 14.0\Common7\IDE\devenv.exe" SprungSetup\SprungSetup.vdproj /Build Debug'
