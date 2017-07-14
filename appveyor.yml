@@ -6,7 +6,7 @@ build:
   project: Sprung\Sprung.csproj
 
 artifacts:
-  - path: '**\*.exe'
+  - path: 'Sprung\bin\Debug\*.exe'
     name: 'Sprung'
     
 after_build:
