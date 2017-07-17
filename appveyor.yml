@@ -14,4 +14,4 @@ artifacts:
     name: 'SprungSetup'
     
 after_build:
-  - cmd: '"C:\Program Files (x86)\Microsoft Visual Studio 14.0\Common7\IDE\devenv.exe" SprungSetup\SprungSetup.vdproj /Build Debug'
+  - cmd: '"C:\Program Files (x86)\Microsoft Visual Studio 12.0\Common7\IDE\devenv.exe" SprungSetup\SprungSetup.vdproj /Build Debug'
