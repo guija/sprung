@@ -12,7 +12,6 @@ namespace Sprung
 {
     class Window : IComparable<Window>
     {
-
         protected const uint SW_SHOWMAXIMIZED = 3;
         protected const uint SW_SHOW = 5;
         protected const uint SW_RESTORE = 9;

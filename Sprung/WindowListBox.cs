@@ -11,7 +11,6 @@ namespace Sprung
 {
     public class WindowListBox : ListBox
     {
-
         private const int iconSize = 30;
         private const int newItemHeight = 36;
         private int iconMargin = 0;
@@ -61,6 +60,5 @@ namespace Sprung
                 e.DrawFocusRectangle();
             }
         }
-
     }
 }

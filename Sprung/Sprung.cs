@@ -13,7 +13,6 @@ namespace Sprung
 {
     public partial class Sprung : Form
     {
-
         private WindowManager windowManager = null;
         private SystemTray tray = null;
         private WindowMatcher windowMatcher = null;
@@ -46,7 +45,6 @@ namespace Sprung
 
         private void GlobalKeyDown(object sender, KeyEventArgs e)
         {
-            Debug.WriteLine("GlobalKeyDown");
             if (e.KeyCode == Keys.Escape)
             {
                 HideBox();
