@@ -12,9 +12,8 @@ using System.Windows.Forms;
 
 namespace Sprung
 {
-    class Settings
+    public class Settings
     {
-
         private String path = "settings.json";
         private KeysConverter keysConverter = new KeysConverter();
         private List<Regex> excludedPatterns = new List<Regex>();
@@ -73,6 +72,7 @@ namespace Sprung
         }
 
         public Boolean isWindowTitleExcluded(string windowTitle) {
+
             foreach (Regex regex in excludedPatterns)
             {
                 if (regex.Match(windowTitle).Success)
@@ -80,6 +80,7 @@ namespace Sprung
                     return true;
                 }
             }
+
             return false;
         }
 

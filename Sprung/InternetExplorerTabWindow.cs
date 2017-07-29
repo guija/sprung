@@ -8,12 +8,11 @@ using System.Windows.Forms;
 
 namespace Sprung
 {
-    class IETabWindow : Window
+    public class InternetExplorerTabWindow : Window
     {
-
         private SHDocVw.InternetExplorer ie;
 
-        public IETabWindow( SHDocVw.InternetExplorer tab ) : base(new IntPtr(tab.HWND)) {
+        public InternetExplorerTabWindow( SHDocVw.InternetExplorer tab ) : base(new IntPtr(tab.HWND)) {
             this.title = tab.LocationName + " - Internet Explorer";
             this.ie = tab;
             Console.Write(this.handle);
@@ -21,11 +20,7 @@ namespace Sprung
 
         public override void SendToFront()
         {
-            //IWebBrowserApp wb = (IWebBrowserApp)ie;
-            //ie.Document.focus();
-            //((mshtml.HTMLDocument) ie.Document).focus();
             base.SendToFront();
         }
-
     }
 }

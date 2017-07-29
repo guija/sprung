@@ -10,7 +10,7 @@ using System.ComponentModel;
 
 namespace Sprung
 {
-    class Window : IComparable<Window>
+    public class Window : IComparable<Window>
     {
         protected const uint SW_SHOWMAXIMIZED = 3;
         protected const uint SW_SHOW = 5;
@@ -38,15 +38,17 @@ namespace Sprung
                 // Initialization
                 this.handle = handle;
                 int processId = getWindowProcessId(handle.ToInt32());
-                //Process p = Process.GetProcessById(processId);
+
                 this.process = Process.GetProcessById(processId);
                 this.processName = this.process.ProcessName;
+
                 // Get window title
                 StringBuilder strbTitle = new StringBuilder(WINDOW_TITLE_MAX_CHARS);
                 strbTitle.Length = _GetWindowText(this.handle, strbTitle, strbTitle.Capacity + 1);
                 this.title = strbTitle.ToString();
                 this.noTitle = this.title.Length == 0;
-                // Fix the name of some processes
+
+                // Add process name to title if it is not in the window name yet
                 if(!this.title.ToLower().Contains(this.processName.ToLower()))
                 {
                     this.title += String.Format(" - {0}", this.processName);
@@ -228,6 +230,5 @@ namespace Sprung
             GetWindowPlacement(hwnd, ref placement);
             return placement;
         }
-
     }
 }

@@ -67,6 +67,7 @@ namespace Sprung
             if ((modifiers & (int)Keys.Alt) > 0) transformedModifier |= MOD_ALT;
             if ((modifiers & (int)Keys.Shift) > 0) transformedModifier |= MOD_SHIFT; ;
             RegisterHotKey(this.Handle, 1, transformedModifier, keyCode);
+
             // Init shortcut with tabs included
             modifiers = (int)(Keys.Modifiers & settings.getShortcutWithTabs());
             keyCode = (int)(Keys.KeyCode & settings.getShortcutWithTabs());

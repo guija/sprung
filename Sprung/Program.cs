@@ -6,7 +6,7 @@ using System.Windows.Forms;
 
 namespace Sprung
 {
-    static class Program
+    public static class Program
     {
         [STAThread]
         static void Main()

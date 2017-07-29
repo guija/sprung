@@ -11,7 +11,6 @@ namespace Sprung
 {
     class SystemTray
     {
-
         private NotifyIcon symbol;
         private ContextMenuStrip cms;
         private Settings settings;
@@ -70,6 +69,5 @@ namespace Sprung
         {
             settings.load();
         }
-
     }
 }

@@ -7,9 +7,8 @@ using System.Windows.Forms;
 
 namespace Sprung
 {
-    class FirefoxTabWindow : Window
+    public class FirefoxTabWindow : Window
     {
-
         protected int tabIndex;
         protected String tabTitle;
         public int currentTabIndex;
@@ -22,11 +21,6 @@ namespace Sprung
             this.currentTabIndex = currentTabIndex;
         }
 
-        public int getTabIndex()
-        {
-            return tabIndex;
-        }
-
         public override void SendToFront()
         {
             base.SendToFront();
@@ -35,14 +29,7 @@ namespace Sprung
             int direction = Math.Sign(changeVector);
             for (int i = 0; i < tabChanges; i++)
             {
-                if (direction < 0)
-                {
-                    SendKeys.Send("^{PGUP}");
-                }
-                else
-                {
-                    SendKeys.Send("^{PGDN}");
-                }
+                SendKeys.Send(direction < 0 ? "^{PGUP}" : "^{PGDN}");
             }
         }
 

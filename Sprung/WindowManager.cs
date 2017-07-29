@@ -13,7 +13,6 @@ namespace Sprung
 {
     class WindowManager
     {
-
         private Settings settings;
         private List<Window> windows = new List<Window>();
         private bool showTabs = false;
@@ -106,7 +105,7 @@ namespace Sprung
                     Console.WriteLine(tab.LocationURL);
                     Console.WriteLine("visible = " + tab.Visible);
                     Console.WriteLine("hasFocus = " + ((mshtml.HTMLDocument)tab.Document).hasFocus());
-                    tabs.Add(new IETabWindow(tab));
+                    tabs.Add(new InternetExplorerTabWindow(tab));
                 }
             }
             return tabs;

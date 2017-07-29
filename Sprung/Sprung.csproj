@@ -91,7 +91,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="FirefoxTabWindow.cs" />
-    <Compile Include="IETabWindow.cs" />
+    <Compile Include="InternetExplorerTabWindow.cs" />
     <Compile Include="Settings.cs" />
     <Compile Include="WindowListBox.cs">
       <SubType>Component</SubType>
