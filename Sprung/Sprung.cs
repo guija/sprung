@@ -41,6 +41,7 @@ namespace Sprung
             this.Deactivate += DeactivateCallback;
             this.KeyPreview = true;
             this.KeyDown += GlobalKeyDown;
+            this.windowListBox.Sprung = this;
         }
 
         private void GlobalKeyDown(object sender, KeyEventArgs e)
@@ -95,6 +96,7 @@ namespace Sprung
             windowListBox.Items.Clear();
             windowListBox.Items.AddRange(windows.ToArray());
             windowListBox.EndUpdate();
+
             if (windowListBox.Items.Count > 0)
             {
                 windowListBox.SelectedIndex = 0;
@@ -163,7 +165,7 @@ namespace Sprung
             this.Opacity = 0;
         }
 
-        private void sendSelectedWindowToFront()
+        public void sendSelectedWindowToFront()
         {
             if (this.windowListBox.Items.Count > 0)
             {

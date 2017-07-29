@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.ComponentModel;
+using System.Diagnostics;
 
 namespace Sprung
 {
@@ -20,13 +21,21 @@ namespace Sprung
         private TextFormatFlags processFlags = TextFormatFlags.Left | TextFormatFlags.Top;
         private Color processColor = Color.FromArgb(110, 110, 110);
 
+        public Sprung Sprung { get; set; }
+
         public WindowListBox()
         {
             this.DrawMode = DrawMode.OwnerDrawVariable;
             iconMargin = (newItemHeight - iconSize) / 2;
             this.ItemHeight = newItemHeight;
         }
-        
+
+        protected override void OnMouseClick(MouseEventArgs e)
+        {
+            base.OnMouseClick(e);
+            Sprung.sendSelectedWindowToFront();
+        }
+
         protected override void OnDrawItem(DrawItemEventArgs e)
         {
             if (e.Index >= 0 && e.Index < Items.Count)
