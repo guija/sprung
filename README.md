@@ -1,4 +1,4 @@
-# Sprung Window Switcher
+# Sprung - Window Switcher
 
 [![Build status](https://ci.appveyor.com/api/projects/status/nbolylxaxwco3hbb/branch/master?svg=true)](https://ci.appveyor.com/project/guija/sprung/branch/master)
 
