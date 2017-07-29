@@ -1,4 +1,7 @@
 # Sprung Window Switcher
+
+[![Build status](https://ci.appveyor.com/api/projects/status/nbolylxaxwco3hbb/branch/master?svg=true)](https://ci.appveyor.com/project/guija/sprung/branch/master)
+
 A windows application to rapidly switch between multiple windows.  
 Windows are searched by it's window title. The search algorithm is inspired by the command palette from the text editor [Sublime Text](https://www.sublimetext.com/).  
 Sprung is intended to be used only with the keyboard. Therefore the UI is deliberately simple.  
