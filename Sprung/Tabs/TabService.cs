@@ -40,6 +40,7 @@ namespace Sprung.Tabs
 
                 Dictionary<string, int> windowTitleToWindowId = new Dictionary<string, int>();
                 Dictionary<int, IntPtr> windowIdToHandle = new Dictionary<int, IntPtr>();
+                int currentTabIndex = 0;
 
                 foreach(ChromeTabWindow tab in ChromeTabWindow.Tabs)
                 {
@@ -47,6 +48,7 @@ namespace Sprung.Tabs
                     {
                         Debug.WriteLine($"Raw: {tab.RawTitle}, windowId: {tab.WindowId}");
                         windowTitleToWindowId[tab.RawTitle] = tab.WindowId;
+                        currentTabIndex = tab.Index;
                     }
                 }
 
@@ -68,6 +70,7 @@ namespace Sprung.Tabs
                     tab.Process = Process.GetProcessById(processId);
                     tab.ProcessName = "chrome";
                     tab.Title = tab.RawTitle + " - Google Chrome";
+                    tab.CurrentTabIndex = currentTabIndex;
                 }
             }
 

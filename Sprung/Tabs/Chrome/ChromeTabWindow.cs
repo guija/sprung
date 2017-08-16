@@ -26,7 +26,7 @@ namespace Sprung.Tabs.Chrome
 
         public static object TabsLock { get; set; } = new object();
 
-        private int? currentTabIndex = null;
+        public int CurrentTabIndex { get; set; }
         
         public ChromeTabWindow()
         {
@@ -35,7 +35,7 @@ namespace Sprung.Tabs.Chrome
         public override void SendToFront()
         {
             base.SendToFront();
-            int changeVector = Index - currentTabIndex.Value;
+            int changeVector = Index - CurrentTabIndex;
             int tabChanges = Math.Abs(changeVector);
             int direction = Math.Sign(changeVector);
             for (int i = 0; i < tabChanges; i++)
