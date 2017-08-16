@@ -16,7 +16,10 @@ namespace Sprung
 
         public List<Window> match(String pattern)
         {
-            return match(pattern, windowManager.getProcesses());
+            // TODO getWIndows oder getWindow with Tabs?
+            // nur ueber config steuern ob tabs verwendet werden oder nicht?
+            // oder hier noch param listTabs einfuegen?
+            return match(pattern, windowManager.getWindows());
         }
 
         public List<Window> match(String pattern, List<Window> windows)

@@ -42,7 +42,9 @@ namespace Sprung
             {
                 this.ItemHeight = newItemHeight;
                 Window window = Items[e.Index] as Window;
-                String title = window.getTitle().Replace("&", "&&");
+
+                // use modified title?
+                String title = window.RawTitle.Replace("&", "&&");
                 String processName = window.getProcessName().Replace("&", "&&");
 
                 e.DrawBackground();

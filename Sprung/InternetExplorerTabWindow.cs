@@ -13,9 +13,9 @@ namespace Sprung
         private SHDocVw.InternetExplorer ie;
 
         public InternetExplorerTabWindow( SHDocVw.InternetExplorer tab ) : base(new IntPtr(tab.HWND)) {
-            this.title = tab.LocationName + " - Internet Explorer";
+            this.Title = tab.LocationName + " - Internet Explorer";
             this.ie = tab;
-            Console.Write(this.handle);
+            Console.Write(this.Handle);
         }
 
         public override void SendToFront()

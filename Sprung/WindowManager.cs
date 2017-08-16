@@ -8,21 +8,40 @@ using System.Windows.Forms;
 using System.Windows.Automation;
 using System.IO;
 using Newtonsoft.Json.Linq;
+using Sprung.Tabs.Chrome;
 
 namespace Sprung
 {
-    class WindowManager
+    public class WindowManager
     {
         private Settings settings;
         private List<Window> windows = new List<Window>();
         private bool showTabs = false;
 
-        public WindowManager(Settings settings)
+        public WindowManager()
         {
-            this.settings = settings;
+            // TODO load via autofac
+            this.settings = new Settings();
         }
 
-        public List<Window> getProcesses()
+        public List<Window> getWindowsWithTabs()
+        {
+            this.showTabs = true;
+            List<Window> windows = getWindows();
+
+            if (showTabs)
+            {
+                lock (ChromeTabWindow.TabsLock)
+                {
+                    windows.AddRange(ChromeTabWindow.Tabs);
+                }
+            }
+
+            this.showTabs = false;
+            return windows;
+        }
+
+        public List<Window> getWindows()
         {
             windows.Clear();
             EnumDelegate callback = new EnumDelegate(EnumWindowsProc);
@@ -34,20 +53,16 @@ namespace Sprung
             return windows;
         }
 
-        public List<Window> getProcesses(bool showTabs)
-        {
-            this.showTabs = showTabs;
-            List<Window> windows = getProcesses();
-            this.showTabs = false;
-            return windows;
-        }
-
         private bool EnumWindowsProc(IntPtr hWnd, int lParam)
         {
             if (IsWindowVisible(hWnd)) {
+
                 Window window = new Window(hWnd);
+
                 if (!settings.isWindowTitleExcluded(window.getTitle()) && !window.hasNoTitle())
                 {
+
+                    /*
                     if ((showTabs || settings.isListTabsAsWindows()) && window.getProcessName() == "firefox")
                     {
                         windows.AddRange(getFirefoxTabs(window));
@@ -58,11 +73,12 @@ namespace Sprung
                     }
                     else
                     {
-                        windows.Add(window);
-                    }
-                    
+                    */
+
+                    windows.Add(window);
                 }
             }
+
             return true;
         }
 

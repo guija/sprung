@@ -17,7 +17,7 @@ namespace Sprung
         {
             this.tabIndex = tabIndex;
             this.tabTitle = title;
-            this.title = title;
+            this.Title = title;
             this.currentTabIndex = currentTabIndex;
         }
 

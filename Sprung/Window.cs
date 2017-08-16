@@ -7,6 +7,7 @@ using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using System.Drawing;
 using System.ComponentModel;
+using Newtonsoft.Json;
 
 namespace Sprung
 {
@@ -16,16 +17,34 @@ namespace Sprung
         protected const uint SW_SHOW = 5;
         protected const uint SW_RESTORE = 9;
         protected const int WINDOW_TITLE_MAX_CHARS = 255;
-        protected IntPtr handle;
-        protected String processName;
-        protected String title;
+
+        public IntPtr Handle { get; set; }
+
+        public string ProcessName = string.Empty;
+
+        // TODO: titel muss getrennt werden in raw title + modified title, d.h. mit richtigem Programmnamen etc
+        // siehe Window Konstruktor
+        public string Title;
+
+        [JsonProperty("title")]
+        public string RawTitle { get; set; }
+
+        // TODO entfernen oder in property verwandenln!
         protected Boolean noTitle = false;
-        protected Process process;
+
+        public Process Process { get; set; }
+
         protected Icon icon = null;
+
         protected bool isIconQueried = false;
 
         int matchingPriority;
+
         int matchingGroups;
+
+        public Window()
+        {
+        }
 
         public Window(IntPtr handle)
         {
@@ -36,22 +55,24 @@ namespace Sprung
             else
             {
                 // Initialization
-                this.handle = handle;
+                this.Handle = handle;
                 int processId = getWindowProcessId(handle.ToInt32());
 
-                this.process = Process.GetProcessById(processId);
-                this.processName = this.process.ProcessName;
+                this.Process = Process.GetProcessById(processId);
+                this.ProcessName = this.Process.ProcessName;
 
                 // Get window title
                 StringBuilder strbTitle = new StringBuilder(WINDOW_TITLE_MAX_CHARS);
-                strbTitle.Length = _GetWindowText(this.handle, strbTitle, strbTitle.Capacity + 1);
-                this.title = strbTitle.ToString();
-                this.noTitle = this.title.Length == 0;
+                strbTitle.Length = _GetWindowText(this.Handle, strbTitle, strbTitle.Capacity + 1);
+                this.Title = strbTitle.ToString();
+                this.noTitle = this.Title.Length == 0;
+
+                RawTitle = this.Title;
 
                 // Add process name to title if it is not in the window name yet
-                if(!this.title.ToLower().Contains(this.processName.ToLower()))
+                if(!this.Title.ToLower().Contains(this.ProcessName.ToLower()))
                 {
-                    this.title += String.Format(" - {0}", this.processName);
+                    this.Title += String.Format(" - {0}", this.ProcessName);
                 }
             }
         }
@@ -62,34 +83,34 @@ namespace Sprung
             uint appThread = GetCurrentThreadId();
             AttachThreadInput(foreThread, appThread, true);
             Application.DoEvents();
-            WINDOWPLACEMENT p = GetPlacement(this.handle);
-            if (p.showCmd == ShowWindowCommands.Maximized) ShowWindow(this.handle, SW_SHOWMAXIMIZED);
-            else if (p.showCmd == ShowWindowCommands.Minimized) ShowWindow(this.handle, SW_RESTORE);
-            else if (p.showCmd == ShowWindowCommands.Normal) ShowWindow(this.handle, SW_SHOW);
-            else ShowWindow(this.handle, SW_SHOW);
-            BringWindowToTop(this.handle);
-            SetForegroundWindow(this.handle.ToInt32());
+            WINDOWPLACEMENT p = GetPlacement(this.Handle);
+            if (p.showCmd == ShowWindowCommands.Maximized) ShowWindow(this.Handle, SW_SHOWMAXIMIZED);
+            else if (p.showCmd == ShowWindowCommands.Minimized) ShowWindow(this.Handle, SW_RESTORE);
+            else if (p.showCmd == ShowWindowCommands.Normal) ShowWindow(this.Handle, SW_SHOW);
+            else ShowWindow(this.Handle, SW_SHOW);
+            BringWindowToTop(this.Handle);
+            SetForegroundWindow(this.Handle.ToInt32());
             AttachThreadInput(foreThread, appThread, false);
         }
 
         public IntPtr getHandle()
         {
-            return this.handle;
+            return this.Handle;
         }
 
         public String getProcessName()
         {
-            return this.processName;
+            return this.ProcessName;
         }
 
         public String getTitle()
         {
-            return this.title;
+            return this.Title;
         }
 
         public Process getProcess()
         {
-            return this.process;
+            return this.Process;
         }
 
         public Int32 getWindowProcessId(Int32 handle)

@@ -8,6 +8,8 @@ using System.Text;
 using System.Windows.Forms;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
+using System.Threading;
+using Nancy.Hosting.Self;
 
 namespace Sprung
 {
@@ -30,7 +32,7 @@ namespace Sprung
             InitializeComponent();
             this.settings = new Settings();
             this.tray = new SystemTray(settings);
-            this.windowManager = new WindowManager(settings);
+            this.windowManager = new WindowManager();
             this.windowMatcher = new WindowMatcher(this.windowManager);
             this.Visible = false;
             this.Opacity = 0;
@@ -42,6 +44,31 @@ namespace Sprung
             this.KeyPreview = true;
             this.KeyDown += GlobalKeyDown;
             this.windowListBox.Sprung = this;
+
+            new Thread(StartTabService).Start();
+        }
+
+        private void StartTabService()
+        {
+            Debug.WriteLine("StartTabService");
+
+            HostConfiguration hostConfiguration = new HostConfiguration()
+            {
+                UrlReservations = new UrlReservations { CreateAutomatically = true }
+            };
+
+            Uri uri = new Uri("http://localhost:1234");
+
+            using (NancyHost nancyHost = new NancyHost(hostConfiguration, uri))
+            {
+                nancyHost.Start();
+                while(true)
+                {
+                    Thread.Sleep(1000);
+                }
+            }
+
+            Debug.WriteLine("Ended thread");
         }
 
         private void GlobalKeyDown(object sender, KeyEventArgs e)
@@ -115,7 +142,7 @@ namespace Sprung
                 this.Activate();
                 this.searchBox.Focus();
                 this.searchBox.Text = "";
-                this.cachedWindows = windowManager.getProcesses();
+                this.cachedWindows = windowManager.getWindows();
                 showProcesses(this.cachedWindows);
             }
             if (m.Msg == WM_HOTKEY && (int)m.WParam == 2)
@@ -127,7 +154,7 @@ namespace Sprung
                 this.Activate();
                 this.searchBox.Focus();
                 this.searchBox.Text = "";
-                this.cachedWindows = windowManager.getProcesses(true);
+                this.cachedWindows = windowManager.getWindowsWithTabs();
                 showProcesses(this.cachedWindows);
             }
             base.WndProc(ref m);
