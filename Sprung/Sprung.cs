@@ -67,8 +67,6 @@ namespace Sprung
                     Thread.Sleep(1000);
                 }
             }
-
-            Debug.WriteLine("Ended thread");
         }
 
         private void GlobalKeyDown(object sender, KeyEventArgs e)

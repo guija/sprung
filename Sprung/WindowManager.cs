@@ -1,13 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Diagnostics;
 using System.Runtime.InteropServices;
-using System.Windows.Forms;
-using System.Windows.Automation;
-using System.IO;
-using Newtonsoft.Json.Linq;
 using Sprung.Tabs.Chrome;
 
 namespace Sprung
@@ -82,6 +75,7 @@ namespace Sprung
             return true;
         }
 
+        /*
         private List<Window> getFirefoxTabs(Window firefoxWindow)
         {
             List<Window> tabs = new List<Window>();
@@ -126,6 +120,7 @@ namespace Sprung
             }
             return tabs;
         }
+        */
 
         private delegate bool EnumDelegate(IntPtr hWnd, int lParam);
 
