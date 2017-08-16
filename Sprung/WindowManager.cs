@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using Sprung.Tabs.Chrome;
+using System.Linq;
 
 namespace Sprung
 {
@@ -22,8 +23,11 @@ namespace Sprung
             this.showTabs = true;
             List<Window> windows = getWindows();
 
+            // TODO originale eintraege loeschen (z.B.) chrome
             if (showTabs)
             {
+                windows = windows.Where(window => window.ProcessName != "chrome").ToList();
+
                 lock (ChromeTabWindow.TabsLock)
                 {
                     windows.AddRange(ChromeTabWindow.Tabs);
