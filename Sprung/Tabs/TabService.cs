@@ -2,20 +2,17 @@
 using Nancy.Extensions;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-using Sprung.Tabs.Chrome;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Sprung.Tabs
 {
     public class TabService : NancyModule
     {
         // TODO per autofac einbinden
-        private WindowManager windowManager = new WindowManager();
+        private WindowManager windowManager = WindowManager.GetInstance();
 
         public TabService()
         {
@@ -25,52 +22,63 @@ namespace Sprung.Tabs
         private string SetChromeTabs(dynamic parameters)
         {
             string body = this.Request.Body.AsString();
-            Debug.WriteLine(body);
-
             JArray tabs = JArray.Parse(body);
 
-            lock (ChromeTabWindow.TabsLock)
+            lock (windowManager)
             {
-                ChromeTabWindow.Tabs.Clear();
+                List<TabWindow> tabList = new List<TabWindow>();
+
                 foreach (JObject tab in tabs)
                 {
-                    ChromeTabWindow chromeTabWindow = JsonConvert.DeserializeObject<ChromeTabWindow>(tab.ToString());
-                    ChromeTabWindow.Tabs.Add(chromeTabWindow);
+                    TabWindow tabWindow = JsonConvert.DeserializeObject<TabWindow>(tab.ToString());
+                    tabList.Add(tabWindow);
                 }
 
                 Dictionary<string, int> windowTitleToWindowId = new Dictionary<string, int>();
-                Dictionary<int, IntPtr> windowIdToHandle = new Dictionary<int, IntPtr>();
-                int currentTabIndex = 0;
+                IntPtr handle = IntPtr.Zero;
+                
+                TabWindow currentTab = tabList.Where(tab => tab.IsCurrent).FirstOrDefault();
 
-                foreach(ChromeTabWindow tab in ChromeTabWindow.Tabs)
+                if (currentTab == null)
                 {
-                    if (tab.IsCurrent)
-                    {
-                        Debug.WriteLine($"Raw: {tab.RawTitle}, windowId: {tab.WindowId}");
-                        windowTitleToWindowId[tab.RawTitle] = tab.WindowId;
-                        currentTabIndex = tab.Index;
-                    }
+                    return string.Empty;
                 }
+
+                string currentTabTitle = currentTab.RawTitle;
+                int currentTabIndex = currentTab.Index;
 
                 foreach(Window window in windowManager.getWindows())
                 {
                     string titleWithoutProgramName = window.RawTitle.Replace(" - Google Chrome", "");
-                    if (windowTitleToWindowId.ContainsKey(titleWithoutProgramName))
+                    if (currentTabTitle == titleWithoutProgramName)
                     {
-                        int windowId = windowTitleToWindowId[titleWithoutProgramName];
-                        Debug.WriteLine($"windowId: {windowId}, handle = {window.Handle}");
-                        windowIdToHandle[windowId] = window.Handle;
+                        handle = window.Handle;
                     }
                 }
 
-                foreach (ChromeTabWindow tab in ChromeTabWindow.Tabs)
+                // Passiert wenn zu einem Tab geswitched wird, dann stimmt der Titel nicht mehr mit dem aktuellen Tab ueberein
+                if (handle == IntPtr.Zero)
                 {
-                    tab.Handle = windowIdToHandle[tab.WindowId];
+                    return string.Empty;
+                }
+
+                foreach (TabWindow tab in tabList)
+                {
+                    tab.Handle = handle;
                     int processId = tab.getWindowProcessId(tab.Handle.ToInt32());
                     tab.Process = Process.GetProcessById(processId);
                     tab.ProcessName = "chrome";
                     tab.Title = tab.RawTitle + " - Google Chrome";
                     tab.CurrentTabIndex = currentTabIndex;
+                }
+
+                if (tabList.Count == 0 && windowManager.Tabs.ContainsKey(handle))
+                {
+                    windowManager.Tabs.Remove(handle);
+                }
+                else
+                {
+                    windowManager.Tabs[handle] = tabList;
                 }
             }
 

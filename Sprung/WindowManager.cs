@@ -1,16 +1,30 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
-using Sprung.Tabs.Chrome;
 using System.Linq;
+using Sprung.Tabs;
+using System.Collections;
 
 namespace Sprung
 {
     public class WindowManager
     {
         private Settings settings;
+
         private List<Window> windows = new List<Window>();
-        private bool showTabs = false;
+
+        private static WindowManager instance = null;
+
+        public static WindowManager GetInstance()
+        {
+            return (instance = (instance ?? new WindowManager()));
+        }
+
+        // Key: tuple (process name, window id)
+        // Value: List of windows that are in that process & window
+        public Dictionary<IntPtr, List<TabWindow>> Tabs { get; set; } = new Dictionary<IntPtr, List<TabWindow>>();
+
+        public object TabsLock { get; set; } = new object();
 
         public WindowManager()
         {
@@ -20,22 +34,26 @@ namespace Sprung
 
         public List<Window> getWindowsWithTabs()
         {
-            this.showTabs = true;
-            List<Window> windows = getWindows();
-
-            // TODO originale eintraege loeschen (z.B.) chrome
-            if (showTabs)
+            lock (TabsLock)
             {
-                windows = windows.Where(window => window.ProcessName != "chrome").ToList();
+                List<Window> windows = getWindows();
 
-                lock (ChromeTabWindow.TabsLock)
+                List<Window> windowsWithTabs = new List<Window>();
+
+                foreach (Window window in windows)
                 {
-                    windows.AddRange(ChromeTabWindow.Tabs);
+                    if (Tabs.ContainsKey(window.Handle) && Tabs[window.Handle].Count > 0)
+                    {
+                        windowsWithTabs.AddRange(Tabs[window.Handle]);
+                    }
+                    else
+                    {
+                        windowsWithTabs.Add(window);
+                    }
                 }
-            }
 
-            this.showTabs = false;
-            return windows;
+                return windowsWithTabs;
+            }
         }
 
         public List<Window> getWindows()
@@ -58,73 +76,12 @@ namespace Sprung
 
                 if (!settings.isWindowTitleExcluded(window.getTitle()) && !window.hasNoTitle())
                 {
-
-                    /*
-                    if ((showTabs || settings.isListTabsAsWindows()) && window.getProcessName() == "firefox")
-                    {
-                        windows.AddRange(getFirefoxTabs(window));
-                    }
-                    else if ((showTabs || settings.isListTabsAsWindows()) && window.getProcessName() == "iexplore")
-                    {
-                        windows.AddRange(getIETabs(window));
-                    }
-                    else
-                    {
-                    */
-
                     windows.Add(window);
                 }
             }
 
             return true;
         }
-
-        /*
-        private List<Window> getFirefoxTabs(Window firefoxWindow)
-        {
-            List<Window> tabs = new List<Window>();
-            string path = Directory.GetParent(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData)).FullName;
-            if (Environment.OSVersion.Version.Major >= 6) path = Directory.GetParent(path).ToString();
-            path += "/AppData/Roaming/Mozilla/Firefox/Profiles";
-            path = Directory.GetDirectories(path)[0];
-            path += "/sessionstore-backups/";
-
-            String recovery = path + "/recovery.js";
-            String recoveryTmp = path + "/recovery.js.tmp";
-            String file = File.Exists(recoveryTmp) ? recoveryTmp : recovery;
-
-            StreamReader streamReader = new StreamReader(file);
-            String content = streamReader.ReadToEnd();
-            JObject data = JObject.Parse(content);
-            int currentTabIndex = 0, i = 0;
-            foreach (JObject tab in data["windows"][0]["tabs"])
-            {
-                String title = (String) tab["entries"].Last["title"];
-                title += " - Mozilla Firefox";
-                currentTabIndex = title == firefoxWindow.getTitle() ? i : currentTabIndex;
-                tabs.Add(new FirefoxTabWindow(firefoxWindow.getHandle(), currentTabIndex, i++, title));
-            }
-            foreach(FirefoxTabWindow w in tabs) {
-                w.currentTabIndex = currentTabIndex;
-            }
-            return tabs;              
-        }
-
-        public List<Window> getIETabs(Window ieWindow) {
-            List<Window> tabs = new List<Window>();
-            foreach (SHDocVw.InternetExplorer tab in new SHDocVw.ShellWindows())
-            {
-                if (!tab.LocationURL.StartsWith("file"))
-                {
-                    Console.WriteLine(tab.LocationURL);
-                    Console.WriteLine("visible = " + tab.Visible);
-                    Console.WriteLine("hasFocus = " + ((mshtml.HTMLDocument)tab.Document).hasFocus());
-                    tabs.Add(new InternetExplorerTabWindow(tab));
-                }
-            }
-            return tabs;
-        }
-        */
 
         private delegate bool EnumDelegate(IntPtr hWnd, int lParam);
 

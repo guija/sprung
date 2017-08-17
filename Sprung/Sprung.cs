@@ -32,7 +32,7 @@ namespace Sprung
             InitializeComponent();
             this.settings = new Settings();
             this.tray = new SystemTray(settings);
-            this.windowManager = new WindowManager();
+            this.windowManager = WindowManager.GetInstance();
             this.windowMatcher = new WindowMatcher(this.windowManager);
             this.Visible = false;
             this.Opacity = 0;

@@ -6,9 +6,9 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace Sprung.Tabs.Chrome
+namespace Sprung.Tabs
 {
-    public class ChromeTabWindow : Window
+    public class TabWindow : Window
     {
         [JsonProperty("id")]
         public int Id { get; set; }
@@ -22,15 +22,11 @@ namespace Sprung.Tabs.Chrome
         [JsonProperty("isCurrent")]
         public bool IsCurrent { get; set; }
 
-        public static List<ChromeTabWindow> Tabs { get; set; } = new List<ChromeTabWindow>();
-
-        public static object TabsLock { get; set; } = new object();
-
         public int CurrentTabIndex { get; set; }
-        
-        public ChromeTabWindow()
-        {
-        }
+
+        private const string NEXT_TAB_KEYS = "^{PGUP}";
+
+        private const string PREVIOUS_TAB_KEYS = "^{PGDN}";
 
         public override void SendToFront()
         {
@@ -38,9 +34,10 @@ namespace Sprung.Tabs.Chrome
             int changeVector = Index - CurrentTabIndex;
             int tabChanges = Math.Abs(changeVector);
             int direction = Math.Sign(changeVector);
+
             for (int i = 0; i < tabChanges; i++)
             {
-                SendKeys.Send(direction < 0 ? "^{PGUP}" : "^{PGDN}");
+                SendKeys.Send(direction < 0 ? NEXT_TAB_KEYS : PREVIOUS_TAB_KEYS);
             }
         }
     }

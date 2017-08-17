@@ -93,7 +93,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Settings.cs" />
-    <Compile Include="Tabs\Chrome\ChromeTabWindow.cs" />
+    <Compile Include="Tabs\TabWindow.cs" />
     <Compile Include="Tabs\TabService.cs" />
     <Compile Include="WindowListBox.cs">
       <SubType>Component</SubType>
