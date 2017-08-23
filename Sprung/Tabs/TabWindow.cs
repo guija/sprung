@@ -28,6 +28,8 @@ namespace Sprung.Tabs
 
         private const string PREVIOUS_TAB_KEYS = "^{PGDN}";
 
+        // Go to the correct tab inside a window handle by using CTRL+PGUP, CTRL+PGDN
+        // Hack, but works on all browser, no UI inspection needed.
         public override void SendToFront()
         {
             base.SendToFront();

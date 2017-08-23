@@ -21,6 +21,8 @@ namespace Sprung.Tabs
 
         private string SetChromeTabs(dynamic parameters)
         {
+            Debug.WriteLine("SetChromeTabs");
+
             string body = this.Request.Body.AsString();
             JArray tabs = JArray.Parse(body);
 
@@ -56,7 +58,8 @@ namespace Sprung.Tabs
                     }
                 }
 
-                // Passiert wenn zu einem Tab geswitched wird, dann stimmt der Titel nicht mehr mit dem aktuellen Tab ueberein
+                // Happens when tab was switched, then the title is not the
+                // same of the window
                 if (handle == IntPtr.Zero)
                 {
                     return string.Empty;
@@ -72,7 +75,7 @@ namespace Sprung.Tabs
                     tab.CurrentTabIndex = currentTabIndex;
                 }
 
-                if (tabList.Count == 0 && windowManager.Tabs.ContainsKey(handle))
+                if (!tabList.Any() && windowManager.Tabs.ContainsKey(handle))
                 {
                     windowManager.Tabs.Remove(handle);
                 }

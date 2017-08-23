@@ -9,7 +9,7 @@ namespace Sprung
 {
     public class WindowManager
     {
-        private Settings settings;
+        private Settings settings = Settings.GetInstance();
 
         private List<Window> windows = new List<Window>();
 
@@ -25,12 +25,6 @@ namespace Sprung
         public Dictionary<IntPtr, List<TabWindow>> Tabs { get; set; } = new Dictionary<IntPtr, List<TabWindow>>();
 
         public object TabsLock { get; set; } = new object();
-
-        public WindowManager()
-        {
-            // TODO load via autofac
-            this.settings = new Settings();
-        }
 
         public List<Window> getWindowsWithTabs()
         {
@@ -74,7 +68,7 @@ namespace Sprung
 
                 Window window = new Window(hWnd);
 
-                if (!settings.isWindowTitleExcluded(window.getTitle()) && !window.hasNoTitle())
+                if (!settings.IsWindowTitleExcluded(window.getTitle()) && !window.hasNoTitle())
                 {
                     windows.Add(window);
                 }

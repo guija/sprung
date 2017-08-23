@@ -14,25 +14,41 @@ namespace Sprung
 {
     public class Settings
     {
-        private String path = "settings.json";
-        private KeysConverter keysConverter = new KeysConverter();
-        private List<Regex> excludedPatterns = new List<Regex>();
-        private Boolean listTabsAsWindows = false;
-        private Keys shortcut = Keys.Alt | Keys.Space;
-        private Keys shortcutWithTabs = Keys.Alt | Keys.Shift | Keys.Space;
+        private const String settingsFileName = "settings.json";
+
         private JObject settings;
+
+        private static KeysConverter keysConverter = new KeysConverter();
+
+        private List<Regex> excludedPatterns = new List<Regex>();
+
+        public bool IsListTabsAsWindows { get; set; } = false;
+
+        public Keys Shortcut { get; set; } = Keys.Alt | Keys.Space;
+
+        public Keys ShortcutShowTabs { get; set; } = Keys.Alt | Keys.Shift | Keys.Space;
+
+        private static Settings instance = null;
 
         public Settings()
         {
             load();
         }
 
-        public void load() {
+        public static Settings GetInstance()
+        {
+            return instance ?? (instance = new Settings());
+        }
+
+        // TODO constants
+        public void load()
+        {
             try
             {
-                StreamReader streamReader = new StreamReader(path);
+                StreamReader streamReader = new StreamReader(settingsFileName);
                 String content = streamReader.ReadToEnd();
                 settings = JObject.Parse(content);
+
                 if (settings["excluded"] != null)
                 {
                     foreach (string pattern in settings["excluded"])
@@ -40,21 +56,24 @@ namespace Sprung
                         excludedPatterns.Add(new Regex(pattern));
                     }
                 }
+
                 if (settings["list_tabs_as_windows"] != null)
                 {
-                    listTabsAsWindows = (Boolean)settings["list_tabs_as_windows"];
+                    IsListTabsAsWindows = (bool)settings["list_tabs_as_windows"];
                 }
+
                 if (settings["open_window_list"] != null)
                 {
                     String shortcutAsString = (String)settings["open_window_list"];
                     shortcutAsString = shortcutAsString.Replace("+", ",");
-                    this.shortcut = (Keys)Enum.Parse(typeof(Keys), shortcutAsString);
+                    Shortcut = (Keys)Enum.Parse(typeof(Keys), shortcutAsString);
                 }
+
                 if (settings["open_window_list_with_tabs"] != null)
                 {
                     String shortcutAsString = (String)settings["open_window_list_with_tabs"];
                     shortcutAsString = shortcutAsString.Replace("+", ",");
-                    this.shortcutWithTabs = (Keys)Enum.Parse(typeof(Keys), shortcutAsString);
+                    ShortcutShowTabs = (Keys)Enum.Parse(typeof(Keys), shortcutAsString);
                 }
             }
             catch (Exception e)
@@ -63,6 +82,8 @@ namespace Sprung
             }
         }
 
+        // TODO
+        /*
         public void save()
         {
             settings["list_tabs_as_windows"] = listTabsAsWindows;
@@ -70,63 +91,22 @@ namespace Sprung
             List<String> excludedPatternStrings = excludedPatterns.Select(x => x.ToString()).ToList();
             settings["excluded"] = new JArray(excludedPatternStrings);            
         }
+        */
 
-        public Boolean isWindowTitleExcluded(string windowTitle) {
-
-            foreach (Regex regex in excludedPatterns)
-            {
-                if (regex.Match(windowTitle).Success)
-                {
-                    return true;
-                }
-            }
-
-            return false;
-        }
-
-        public void setExcludedPatterns(List<String> patterns)
+        public Boolean IsWindowTitleExcluded(string windowTitle)
         {
-            List<Regex> regexList = new List<Regex>();
-            foreach (String pattern in patterns)
-            {
-                regexList.Add(new Regex(pattern));
-            }
-            this.excludedPatterns = regexList;
+            return excludedPatterns.Any(regex => regex.Match(windowTitle).Success);
         }
 
-        public void setExcludedPatterns(List<Regex> patterns)
+        public void SetExcludedPatterns(List<String> patterns)
+        {
+            excludedPatterns.Clear();
+            excludedPatterns.AddRange(patterns.Select(pattern => new Regex(pattern)));
+        }
+
+        public void SetExcludedPatterns(List<Regex> patterns)
         {
             this.excludedPatterns = patterns;
-        }
-
-        public List<Regex> getExcludedPatterns()
-        {
-            return excludedPatterns;
-        }
-
-        public Boolean isListTabsAsWindows()
-        {
-            return listTabsAsWindows;
-        }
-
-        public void setListTabsAsWindows(Boolean listTabsAsWindows)
-        {
-            this.listTabsAsWindows = listTabsAsWindows;
-        }
-
-        public void setShortcut(Keys keys)
-        {
-            this.shortcut = keys;
-        }
-
-        public Keys getShortcut()
-        {
-            return this.shortcut;
-        }
-
-        public Keys getShortcutWithTabs()
-        {
-            return this.shortcutWithTabs;
         }
     }
 }

@@ -22,6 +22,10 @@ namespace Sprung
         private Settings settings = null;
         private List<Window> cachedWindows = null;
 
+        private const string TabServiceHost = "localhost";
+        private const int TabServicePort = 1234;
+        private NancyHost tabService = null;
+
         const int MOD_ALT = 0x0001;
         const int MOD_CONTROL = 0x0002;
         const int MOD_SHIFT = 0x0004;
@@ -45,7 +49,8 @@ namespace Sprung
             this.KeyDown += GlobalKeyDown;
             this.windowListBox.Sprung = this;
 
-            new Thread(StartTabService).Start();
+            // new Thread(StartTabService).Start();
+            StartTabService();
         }
 
         private void StartTabService()
@@ -57,22 +62,17 @@ namespace Sprung
                 UrlReservations = new UrlReservations { CreateAutomatically = true }
             };
 
-            Uri uri = new Uri("http://localhost:1234");
+            Uri uri = new Uri($"http://{TabServiceHost}:{TabServicePort}");
 
-            using (NancyHost nancyHost = new NancyHost(hostConfiguration, uri))
-            {
-                nancyHost.Start();
-                while(true)
-                {
-                    Thread.Sleep(1000);
-                }
-            }
+            this.tabService = new NancyHost(hostConfiguration, uri);
+            this.tabService.Start();
         }
 
         private void GlobalKeyDown(object sender, KeyEventArgs e)
         {
             if (e.KeyCode == Keys.Escape)
             {
+                Debug.WriteLine("ESC");
                 HideBox();
             }
         }
@@ -82,11 +82,12 @@ namespace Sprung
             initShortcut();
         }
 
+        // TODO Handle shortcut with actions etc. see keytrack project
         public void initShortcut()
         {
             // Init normal shortcut
-            int modifiers = (int)(Keys.Modifiers & settings.getShortcut());
-            int keyCode = (int)(Keys.KeyCode & settings.getShortcut());
+            int modifiers = (int)(Keys.Modifiers & settings.Shortcut);
+            int keyCode = (int)(Keys.KeyCode & settings.Shortcut);
             int transformedModifier = 0x0;
             if ((modifiers & (int)Keys.Control) > 0) transformedModifier |= MOD_CONTROL;
             if ((modifiers & (int)Keys.Alt) > 0) transformedModifier |= MOD_ALT;
@@ -94,8 +95,8 @@ namespace Sprung
             RegisterHotKey(this.Handle, 1, transformedModifier, keyCode);
 
             // Init shortcut with tabs included
-            modifiers = (int)(Keys.Modifiers & settings.getShortcutWithTabs());
-            keyCode = (int)(Keys.KeyCode & settings.getShortcutWithTabs());
+            modifiers = (int)(Keys.Modifiers & settings.ShortcutShowTabs);
+            keyCode = (int)(Keys.KeyCode & settings.Shortcut);
             transformedModifier = 0x0;
             if ((modifiers & (int)Keys.Control) > 0) transformedModifier |= MOD_CONTROL;
             if ((modifiers & (int)Keys.Alt) > 0) transformedModifier |= MOD_ALT;
@@ -143,6 +144,7 @@ namespace Sprung
                 this.cachedWindows = windowManager.getWindows();
                 showProcesses(this.cachedWindows);
             }
+
             if (m.Msg == WM_HOTKEY && (int)m.WParam == 2)
             {
                 this.Visible = true;

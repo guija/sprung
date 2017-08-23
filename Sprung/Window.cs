@@ -49,28 +49,26 @@ namespace Sprung
             {
                 throw new Exception("Invalid arguments passed to constructor in class \"Process\"");
             }
-            else
+
+            // Initialization
+            this.Handle = handle;
+            int processId = getWindowProcessId(handle.ToInt32());
+
+            this.Process = Process.GetProcessById(processId);
+            this.ProcessName = this.Process.ProcessName;
+
+            // Get window title
+            StringBuilder strbTitle = new StringBuilder(WINDOW_TITLE_MAX_CHARS);
+            strbTitle.Length = _GetWindowText(this.Handle, strbTitle, strbTitle.Capacity + 1);
+            this.Title = strbTitle.ToString();
+            this.noTitle = this.Title.Length == 0;
+
+            RawTitle = this.Title;
+
+            // Add process name to title if it is not in the window name yet
+            if(!this.Title.ToLower().Contains(this.ProcessName.ToLower()))
             {
-                // Initialization
-                this.Handle = handle;
-                int processId = getWindowProcessId(handle.ToInt32());
-
-                this.Process = Process.GetProcessById(processId);
-                this.ProcessName = this.Process.ProcessName;
-
-                // Get window title
-                StringBuilder strbTitle = new StringBuilder(WINDOW_TITLE_MAX_CHARS);
-                strbTitle.Length = _GetWindowText(this.Handle, strbTitle, strbTitle.Capacity + 1);
-                this.Title = strbTitle.ToString();
-                this.noTitle = this.Title.Length == 0;
-
-                RawTitle = this.Title;
-
-                // Add process name to title if it is not in the window name yet
-                if(!this.Title.ToLower().Contains(this.ProcessName.ToLower()))
-                {
-                    this.Title += String.Format(" - {0}", this.ProcessName);
-                }
+                this.Title += String.Format(" - {0}", this.ProcessName);
             }
         }
 
