@@ -29,10 +29,10 @@ With sprung you can also switch to any tab openend in a browser by using the sho
 To enable tab support you have to install the sprung extension for your specific browser.
 
 At the moment the following browsers are supported:
-- Google Chrome
+- [Google Chrome](https://github.com/guija/sprung-chrome)
 
 The extensions for the following browsers are currently under development:
-- Mozilla Firefox
+- [Mozilla Firefox](https://github.com/guija/sprung-firefox)
 
 We are looking for developers willing to write extensions for the following browsers:
 - Internet Explorer
