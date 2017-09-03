@@ -17,6 +17,12 @@ namespace Sprung.Tabs
         public TabService()
         {
             Post["/chrome"] = SetChromeTabs;
+            Get["/test"] = Test;
+        }
+
+        private string Test(dynamic parameters)
+        {
+            return "ok";
         }
 
         private string SetChromeTabs(dynamic parameters)
