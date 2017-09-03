@@ -7,11 +7,18 @@ build:
 
 artifacts:
 
-  - path: 'Sprung\bin\Debug\*.exe'
+  - path: 'Sprung\bin\Release\*.exe'
     name: 'Sprung'
 
-  - path: 'SprungSetup\Debug\setup.exe'
+  - path: 'SprungSetup\Release\SprungSetup.msi'
     name: 'SprungSetup'
+
+platform:
+  - Any CPU
+
+configuration:
+  - Release
+  - Debug
     
 #after_build:
-#  - cmd: '"C:\Program Files (x86)\Microsoft Visual Studio 12.0\Common7\IDE\devenv.exe" SprungSetup\SprungSetup.vdproj /Build Debug /Projectconfig Release'
+#  - cmd: '"C:\Program Files (x86)\Microsoft Visual Studio 12.0\Common7\IDE\devenv.exe" SprungSetup\SprungSetup.vdproj /Build Release /Projectconfig Release'
