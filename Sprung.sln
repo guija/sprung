@@ -1,13 +1,13 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 14
-VisualStudioVersion = 14.0.24720.0
+# Visual Studio 15
+VisualStudioVersion = 15.0.26430.15
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sprung", "Sprung\Sprung.csproj", "{7249A4ED-3C99-49FC-9144-92F2AFEB5252}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{CD73995A-49EB-447F-9320-0AAE702575E2}"
 EndProject
-Project("{54435603-DBB4-11D2-8724-00A0C9A8B90C}") = "SprungSetup", "SprungSetup\SprungSetup.vdproj", "{1AD27A99-C5B4-4011-AEBE-A2E8EEE827F2}"
+Project("{54435603-DBB4-11D2-8724-00A0C9A8B90C}") = "SprungSetup", "SprungSetup\SprungSetup.vdproj", "{6D924EC3-00D1-44A4-939D-0CDAEB1F5136}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -20,8 +20,8 @@ Global
 		{7249A4ED-3C99-49FC-9144-92F2AFEB5252}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
 		{7249A4ED-3C99-49FC-9144-92F2AFEB5252}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7249A4ED-3C99-49FC-9144-92F2AFEB5252}.Release|Any CPU.Build.0 = Release|Any CPU
-		{1AD27A99-C5B4-4011-AEBE-A2E8EEE827F2}.Debug|Any CPU.ActiveCfg = Debug
-		{1AD27A99-C5B4-4011-AEBE-A2E8EEE827F2}.Release|Any CPU.ActiveCfg = Release
+		{6D924EC3-00D1-44A4-939D-0CDAEB1F5136}.Debug|Any CPU.ActiveCfg = Debug
+		{6D924EC3-00D1-44A4-939D-0CDAEB1F5136}.Release|Any CPU.ActiveCfg = Release
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

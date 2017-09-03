@@ -157,10 +157,12 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Properties\spring.png" />
-    <None Include="settings.json">
+    <Content Include="settings.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="spring.ico" />
+    </Content>
+    <Content Include="spring.ico">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
   <ItemGroup>
     <WCFMetadata Include="Service References\" />

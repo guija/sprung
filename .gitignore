@@ -1,5 +1,6 @@
 Sprung/bin/
 Sprung/obj/
 SprungSetup/Debug/
+SprungSetup/Release/
 *.suo
 packages/
