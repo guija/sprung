@@ -7,7 +7,7 @@ Windows are searched by it's window title. The search algorithm is inspired by t
 Sprung is intended to be used only with the keyboard. Therefore the UI is deliberately simple.  
 
 ## Download
-You can download the Sprung installer from http://sprung.netzauftrag.com/releases/  
+You can download the Sprung installer from https://github.com/guija/sprung/releases 
 
 ## Installation
 Download the installer of the most recent version on https://github.com/guija/sprung/releases  
