@@ -7,9 +7,6 @@ build:
 
 artifacts:
 
-  - path: 'Sprung\bin\Release\*.exe'
-    name: 'Sprung'
-
   - path: 'SprungSetup\Release\SprungSetup.msi'
     name: 'SprungSetup'
 
