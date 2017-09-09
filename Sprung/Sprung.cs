@@ -124,7 +124,6 @@ namespace Sprung
 
         private void ShowProcesses(List<Window> windows)
         {
-            lastUsedWindow = windows.FirstOrDefault();
             windowListBox.BeginUpdate();
             windowListBox.Items.Clear();
             windowListBox.Items.AddRange(windows.ToArray());
@@ -138,7 +137,7 @@ namespace Sprung
 
         protected override void WndProc(ref Message m)
         {
-            if(m.Msg == WM_HOTKEY && (int) m.WParam == 1)
+            if(m.Msg == WM_HOTKEY && ((int) m.WParam == 1 || (int)m.WParam == 2))
             {
                 this.Visible = true;
                 this.Opacity = 100;
@@ -147,21 +146,22 @@ namespace Sprung
                 this.Activate();
                 this.searchBox.Focus();
                 this.searchBox.Text = "";
-                this.cachedWindows = windowManager.getWindows();
-                ShowProcesses(this.cachedWindows);
-            }
 
-            if (m.Msg == WM_HOTKEY && (int)m.WParam == 2)
-            {
-                this.Visible = true;
-                this.Opacity = 100;
-                this.CenterToScreen();
-                this.mainWindow.SendToFront();
-                this.Activate();
-                this.searchBox.Focus();
-                this.searchBox.Text = "";
-                this.cachedWindows = windowManager.getWindowsWithTabs();
+                if ((int)m.WParam == 1)
+                {
+                    this.cachedWindows = windowManager.getWindows();
+                }
+                else if ((int)m.WParam == 2)
+                {
+                    this.cachedWindows = windowManager.getWindowsWithTabs();
+                }
+                else
+                {
+                    Debug.WriteLine("Unknown key combination, should never happend");
+                }
+                
                 ShowProcesses(this.cachedWindows);
+                lastUsedWindow = this.cachedWindows.FirstOrDefault();
             }
 
             base.WndProc(ref m);
