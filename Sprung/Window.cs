@@ -17,27 +17,20 @@ namespace Sprung
 
         public IntPtr Handle { get; set; }
 
-        public string ProcessName = string.Empty;
+        public string ProcessName { get; set; } = string.Empty;
 
-        // TODO: titel muss getrennt werden in raw title + modified title, d.h. mit richtigem Programmnamen etc
-        // siehe Window Konstruktor
-        public string Title;
+        public string Title { get; set; } = string.Empty;
 
         [JsonProperty("title")]
-        public string RawTitle { get; set; }
-
-        // TODO entfernen oder in property verwandenln!
-        protected Boolean noTitle = false;
+        public string TitleRaw { get; set; }
 
         public Process Process { get; set; }
 
         protected Icon icon = null;
 
-        protected bool isIconQueried = false;
+        public int MatchingPriority { get; set; } = 0;
 
-        int matchingPriority;
-
-        int matchingGroups;
+        public int MatchingGroups { get; set; } = 0;
 
         public Window()
         {
@@ -52,18 +45,17 @@ namespace Sprung
 
             // Initialization
             this.Handle = handle;
-            int processId = getWindowProcessId(handle.ToInt32());
+            int processId = GetWindowProcessId(handle.ToInt32());
 
             this.Process = Process.GetProcessById(processId);
             this.ProcessName = this.Process.ProcessName;
 
             // Get window title
-            StringBuilder strbTitle = new StringBuilder(WINDOW_TITLE_MAX_CHARS);
-            strbTitle.Length = _GetWindowText(this.Handle, strbTitle, strbTitle.Capacity + 1);
-            this.Title = strbTitle.ToString();
-            this.noTitle = this.Title.Length == 0;
+            StringBuilder stringBuilderTitle = new StringBuilder(WINDOW_TITLE_MAX_CHARS);
+            stringBuilderTitle.Length = _GetWindowText(this.Handle, stringBuilderTitle, stringBuilderTitle.Capacity + 1);
+            this.Title = stringBuilderTitle.ToString();
 
-            RawTitle = this.Title;
+            TitleRaw = this.Title;
 
             // Add process name to title if it is not in the window name yet
             if(!this.Title.ToLower().Contains(this.ProcessName.ToLower()))
@@ -88,80 +80,40 @@ namespace Sprung
             AttachThreadInput(foreThread, appThread, false);
         }
 
-        public IntPtr getHandle()
-        {
-            return this.Handle;
-        }
-
-        public String getProcessName()
-        {
-            return this.ProcessName;
-        }
-
-        public String getTitle()
-        {
-            return this.Title;
-        }
-
-        public Process getProcess()
-        {
-            return this.Process;
-        }
-
-        public Int32 getWindowProcessId(Int32 handle)
+        public Int32 GetWindowProcessId(Int32 handle)
         {
             Int32 pointer = 1;
             GetWindowThreadProcessId(handle, out pointer);
             return pointer;
         }
 
-        public Boolean hasNoTitle()
-        {
-            return noTitle;
-        }
-      
-        public int getMatchingPriority()
-        {
-            return this.matchingPriority;
-        }
-
-        public void setMatchingPriority(int matchingPriority)
-        {
-            this.matchingPriority = matchingPriority;
-        }
-
-        public int getMatchingGroups()
-        {
-            return this.matchingGroups;
-        }
-
-        public void setMatchingGroups(int matchingGroups)
-        {
-            this.matchingGroups = matchingGroups;
-        }
-
         public int CompareTo(Window other)
         {
-            return (getMatchingPriority() < other.getMatchingPriority()) ? 1 : (getMatchingPriority() > other.getMatchingPriority()) ? -1 :
-                (getMatchingGroups() < other.getMatchingGroups()) ? -1 : (getMatchingGroups() > other.getMatchingGroups()) ? 1 : 0;
+            return (MatchingPriority < other.MatchingPriority) 
+                ? 1 
+                : (MatchingPriority > other.MatchingPriority) 
+                    ? -1 
+                    : (MatchingGroups < other.MatchingGroups) 
+                        ? -1 
+                        : (MatchingGroups > other.MatchingGroups) ? 1 : 0;
         }
 
-        public Icon getIcon()
+        public Icon GetIcon()
         {
-            if (!isIconQueried)
+            if (icon != null)
             {
-                try
-                {
-                    String processFileName = getProcess().MainModule.FileName;
-                    icon = Icon.ExtractAssociatedIcon(processFileName);
-                }
-                catch (Exception)
-                {
-                    icon = SystemIcons.Application;
-                }
-                isIconQueried = true;
+                return icon;
             }
-            return icon;
+
+            try
+            {
+                String processFileName = Process.MainModule.FileName;
+                return (icon = Icon.ExtractAssociatedIcon(processFileName));
+            }
+            catch (Exception)
+            {
+                return (icon = SystemIcons.Application);
+            }
         }
 
         private delegate bool EnumDelegate(IntPtr hWnd, int lParam);
@@ -174,10 +126,6 @@ namespace Sprung
 
         [DllImport("user32.dll", EntryPoint = "GetWindowText", ExactSpelling = false, CharSet = CharSet.Auto, SetLastError = true)]
         private static extern int _GetWindowText(IntPtr hWnd, StringBuilder lpWindowText, int nMaxCount);
-
-        [DllImport("user32.dll")]
-        [return: MarshalAs(UnmanagedType.Bool)]
-        static extern bool IsWindowVisible(IntPtr hWnd);
 
         [DllImport("User32.dll")]
         public static extern Int32 SetForegroundWindow(int hWnd);
@@ -197,27 +145,13 @@ namespace Sprung
         [DllImport("user32.dll", SetLastError = true)]
         public static extern bool BringWindowToTop(IntPtr hWnd);
 
-        [DllImport("user32.dll", SetLastError = true)]
-        public static extern bool BringWindowToTop(HandleRef hWnd);
-
         [DllImport("user32.dll")]
         public static extern bool ShowWindow(IntPtr hWnd, uint nCmdShow);
-
-        [DllImport("user32.dll")]
-        private static extern
-        bool ShowWindowAsync(IntPtr hWnd, int nCmdShow);
-
-        [DllImport("user32.dll", CharSet = CharSet.Auto)]
-        static extern IntPtr SendMessage(IntPtr hWnd, UInt32 Msg, IntPtr wParam, IntPtr lParam);
-
-        [DllImport("user32.dll")]
-        static extern bool IsIconic(IntPtr hWnd);
 
         // window placement test
         [DllImport("user32.dll", SetLastError = true)]
         [return: MarshalAs(UnmanagedType.Bool)]
-        internal static extern bool GetWindowPlacement(
-            IntPtr hWnd, ref WINDOWPLACEMENT lpwndpl);
+        internal static extern bool GetWindowPlacement(IntPtr hWnd, ref WINDOWPLACEMENT lpwndpl);
 
         [Serializable]
         [StructLayout(LayoutKind.Sequential)]

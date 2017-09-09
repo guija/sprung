@@ -9,8 +9,9 @@ namespace Sprung
         private const int iconSize = 30;
         private const int newItemHeight = 36;
         private int iconMargin = 0;
-        private Font titleFont = new Font("Arial", 10.0f, FontStyle.Regular);
-        private Font processFont = new Font("Arial", 9.0f, FontStyle.Regular);
+        private const string DefaultFontName = "Arial";
+        private Font titleFont = new Font(DefaultFontName, 10.0f, FontStyle.Regular);
+        private Font processFont = new Font(DefaultFontName, 9.0f, FontStyle.Regular);
         private TextFormatFlags titleFlags = TextFormatFlags.Left | TextFormatFlags.Bottom;
         private TextFormatFlags processFlags = TextFormatFlags.Left | TextFormatFlags.Top;
         private Color processColor = Color.FromArgb(110, 110, 110);
@@ -38,13 +39,13 @@ namespace Sprung
                 Window window = Items[e.Index] as Window;
 
                 // use modified title?
-                String title = window.RawTitle.Replace("&", "&&");
-                String processName = window.getProcessName().Replace("&", "&&");
+                String title = window.TitleRaw.Replace("&", "&&");
+                String processName = window.ProcessName.Replace("&", "&&");
 
                 e.DrawBackground();
 
                 // Draw icon
-                Icon icon = window.getIcon();
+                Icon icon = window.GetIcon();
                 if (icon != null)
                 {
                     Image image = (Image)new Bitmap(icon.ToBitmap(), new Size(iconSize, iconSize));

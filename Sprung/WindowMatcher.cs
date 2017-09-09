@@ -27,7 +27,7 @@ namespace Sprung
             if (pattern.Length == 0) return windows;
             foreach (Window window in windows)
             {
-                String title = window.getTitle().ToLower();
+                String title = window.Title.ToLower();
                 pattern = pattern.ToLower();
                 int matchingGroups = 0;
                 int matchingChars = 0;
@@ -54,8 +54,8 @@ namespace Sprung
                     }
                 }
 
-                window.setMatchingPriority(matchingChars);
-                window.setMatchingGroups(matchingGroups);
+                window.MatchingPriority = matchingChars;
+                window.MatchingGroups = matchingGroups;
             }
 
             windows.Sort();

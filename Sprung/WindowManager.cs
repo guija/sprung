@@ -4,6 +4,7 @@ using System.Runtime.InteropServices;
 using System.Linq;
 using Sprung.Tabs;
 using System.Collections;
+using System.Diagnostics;
 
 namespace Sprung
 {
@@ -31,7 +32,6 @@ namespace Sprung
             lock (TabsLock)
             {
                 List<Window> windows = getWindows();
-
                 List<Window> windowsWithTabs = new List<Window>();
 
                 foreach (Window window in windows)
@@ -59,7 +59,38 @@ namespace Sprung
             {
                 throw new Exception("Calling EnumDesktopWindows: Error ocurred: " + Marshal.GetLastWin32Error());
             }
-            return windows;
+
+            List<Window> filteredWindows = FilterWindows10ApplicationFrameHostWindows(windows);
+            return filteredWindows;
+        }
+
+        private List<Window> FilterWindows10ApplicationFrameHostWindows(List<Window> windows)
+        {
+            List<Window> filteredList = new List<Window>();
+            foreach (Window window in windows)
+            {
+                if(window.ProcessName == "ApplicationFrameHost")
+                {
+                    filteredList.Add(window);
+                    continue;
+                }
+
+                Window wrapperWindow = windows.Where(w => w.TitleRaw == window.TitleRaw && w.Handle != window.Handle && w.ProcessName == "ApplicationFrameHost").FirstOrDefault();
+
+                // Ignore all windows for which a window exists that has the ApplicationFrameHost process
+                // name. Because that window is the one to be displayed
+                if (wrapperWindow != null)
+                {
+                    // The wrapper window has the real process name, take that process name and replace the
+                    // "ApplicationFrameHost" processn name of the windows 10 app window
+                    wrapperWindow.ProcessName = window.ProcessName;
+                    continue;
+                }
+
+                filteredList.Add(window);
+            }
+
+            return filteredList;
         }
 
         private bool EnumWindowsProc(IntPtr hWnd, int lParam)
@@ -68,7 +99,7 @@ namespace Sprung
 
                 Window window = new Window(hWnd);
 
-                if (!settings.IsWindowTitleExcluded(window.getTitle()) && !window.hasNoTitle())
+                if (!settings.IsWindowTitleExcluded(window.Title) && window.TitleRaw != string.Empty)
                 {
                     windows.Add(window);
                 }
@@ -85,6 +116,5 @@ namespace Sprung
         [DllImport("user32.dll")]
         [return: MarshalAs(UnmanagedType.Bool)]
         static extern bool IsWindowVisible(IntPtr hWnd);
-
     }
 }

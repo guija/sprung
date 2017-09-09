@@ -52,12 +52,12 @@ namespace Sprung.Tabs
                     return string.Empty;
                 }
 
-                string currentTabTitle = currentTab.RawTitle;
+                string currentTabTitle = currentTab.TitleRaw;
                 int currentTabIndex = currentTab.Index;
 
                 foreach(Window window in windowManager.getWindows())
                 {
-                    string titleWithoutProgramName = window.RawTitle.Replace(" - Google Chrome", "");
+                    string titleWithoutProgramName = window.TitleRaw.Replace(" - Google Chrome", "");
                     if (currentTabTitle == titleWithoutProgramName)
                     {
                         handle = window.Handle;
@@ -74,10 +74,10 @@ namespace Sprung.Tabs
                 foreach (TabWindow tab in tabList)
                 {
                     tab.Handle = handle;
-                    int processId = tab.getWindowProcessId(tab.Handle.ToInt32());
+                    int processId = tab.GetWindowProcessId(tab.Handle.ToInt32());
                     tab.Process = Process.GetProcessById(processId);
                     tab.ProcessName = "chrome";
-                    tab.Title = tab.RawTitle + " - Google Chrome";
+                    tab.Title = tab.TitleRaw + " - Google Chrome";
                     tab.CurrentTabIndex = currentTabIndex;
                 }
 
