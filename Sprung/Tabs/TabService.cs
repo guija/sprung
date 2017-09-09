@@ -27,8 +27,6 @@ namespace Sprung.Tabs
 
         private string SetChromeTabs(dynamic parameters)
         {
-            Debug.WriteLine("SetChromeTabs");
-
             string body = this.Request.Body.AsString();
             JArray tabs = JArray.Parse(body);
 
