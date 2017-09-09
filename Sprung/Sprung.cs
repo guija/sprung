@@ -21,6 +21,7 @@ namespace Sprung
         private Window mainWindow = null;
         private Settings settings = null;
         private List<Window> cachedWindows = null;
+        private Window lastUsedWindow = null;
 
         private const string TabServiceHost = "localhost";
         private const int TabServicePort = 1234;
@@ -72,18 +73,22 @@ namespace Sprung
         {
             if (e.KeyCode == Keys.Escape)
             {
-                Debug.WriteLine("ESC");
                 HideBox();
+                if (lastUsedWindow != null)
+                {
+                    lastUsedWindow.SendToFront();
+                    lastUsedWindow = null;
+                }
             }
         }
 
-        private void loadCallback(object sender, EventArgs e)
+        private void LoadCallback(object sender, EventArgs e)
         {
-            initShortcut();
+            InitShortcuts();
         }
 
         // TODO Handle shortcut with actions etc. see keytrack project
-        public void initShortcut()
+        public void InitShortcuts()
         {
             // Init normal shortcut
             int modifiers = (int)(Keys.Modifiers & settings.Shortcut);
@@ -104,21 +109,22 @@ namespace Sprung
             RegisterHotKey(this.Handle, 2, transformedModifier, keyCode);
         }
 
-        private void exitCallback(object sender, EventArgs e)
+        private void ExitCallback(object sender, EventArgs e)
         {
             UnregisterHotKey(this.Handle, 1);
             UnregisterHotKey(this.Handle, 2);
             Application.Exit();
         }
 
-        private void inputChangedCallback(object sender, EventArgs e)
+        private void InputChangedCallback(object sender, EventArgs e)
         {
             String pattern = searchBox.Text;
-            showProcesses(windowMatcher.match(pattern, cachedWindows));
+            ShowProcesses(windowMatcher.match(pattern, cachedWindows));
         }
 
-        private void showProcesses(List<Window> windows)
+        private void ShowProcesses(List<Window> windows)
         {
+            lastUsedWindow = windows.FirstOrDefault();
             windowListBox.BeginUpdate();
             windowListBox.Items.Clear();
             windowListBox.Items.AddRange(windows.ToArray());
@@ -142,7 +148,7 @@ namespace Sprung
                 this.searchBox.Focus();
                 this.searchBox.Text = "";
                 this.cachedWindows = windowManager.getWindows();
-                showProcesses(this.cachedWindows);
+                ShowProcesses(this.cachedWindows);
             }
 
             if (m.Msg == WM_HOTKEY && (int)m.WParam == 2)
@@ -155,18 +161,19 @@ namespace Sprung
                 this.searchBox.Focus();
                 this.searchBox.Text = "";
                 this.cachedWindows = windowManager.getWindowsWithTabs();
-                showProcesses(this.cachedWindows);
+                ShowProcesses(this.cachedWindows);
             }
+
             base.WndProc(ref m);
         }
 
-        private void searchBoxKeyDown(object sender, KeyEventArgs e)
+        private void SearchBoxKeyDown(object sender, KeyEventArgs e)
         {
             if (this.windowListBox.Items.Count == 0) return;
             if (e.KeyCode == Keys.Enter)
             {
                 HideBox();
-                sendSelectedWindowToFront();
+                SendSelectedWindowToFront();
             } 
             else if (e.KeyCode == Keys.Down && this.windowListBox.SelectedIndex < (this.windowListBox.Items.Count - 1))
             {
@@ -178,7 +185,7 @@ namespace Sprung
             }
         }
 
-        private void searchBoxKeyPress(object sender, KeyPressEventArgs e)
+        private void SearchBoxKeyPress(object sender, KeyPressEventArgs e)
         {
             if (e.KeyChar == (char) Keys.Enter || e.KeyChar == (char) Keys.Escape)
             {
@@ -193,7 +200,7 @@ namespace Sprung
             this.Opacity = 0;
         }
 
-        public void sendSelectedWindowToFront()
+        public void SendSelectedWindowToFront()
         {
             if (this.windowListBox.Items.Count > 0)
             {

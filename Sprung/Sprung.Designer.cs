@@ -40,9 +40,9 @@
             this.searchBox.Name = "searchBox";
             this.searchBox.Size = new System.Drawing.Size(571, 26);
             this.searchBox.TabIndex = 1;
-            this.searchBox.TextChanged += new System.EventHandler(this.inputChangedCallback);
-            this.searchBox.KeyDown += new System.Windows.Forms.KeyEventHandler(this.searchBoxKeyDown);
-            this.searchBox.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.searchBoxKeyPress);
+            this.searchBox.TextChanged += new System.EventHandler(this.InputChangedCallback);
+            this.searchBox.KeyDown += new System.Windows.Forms.KeyEventHandler(this.SearchBoxKeyDown);
+            this.searchBox.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.SearchBoxKeyPress);
             // 
             // windowListBox
             // 
@@ -66,7 +66,7 @@
             this.MaximizeBox = false;
             this.Name = "Sprung";
             this.Text = "Sprung";
-            this.Load += new System.EventHandler(this.loadCallback);
+            this.Load += new System.EventHandler(this.LoadCallback);
             this.ResumeLayout(false);
             this.PerformLayout();
         }

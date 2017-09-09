@@ -28,7 +28,7 @@ namespace Sprung
         protected override void OnMouseClick(MouseEventArgs e)
         {
             base.OnMouseClick(e);
-            Sprung.sendSelectedWindowToFront();
+            Sprung.SendSelectedWindowToFront();
         }
 
         protected override void OnDrawItem(DrawItemEventArgs e)
