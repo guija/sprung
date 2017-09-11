@@ -21,8 +21,8 @@ namespace Sprung
             return (instance = (instance ?? new WindowManager()));
         }
 
-        // Key: tuple (process name, window id)
-        // Value: List of windows that are in that process & window
+        // Key: handle of the window
+        // Value: List of tabs that are in that window
         public Dictionary<IntPtr, List<TabWindow>> Tabs { get; set; } = new Dictionary<IntPtr, List<TabWindow>>();
 
         public object TabsLock { get; set; } = new object();

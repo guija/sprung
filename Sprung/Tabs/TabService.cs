@@ -11,13 +11,23 @@ namespace Sprung.Tabs
 {
     public class TabService : NancyModule
     {
-        // TODO per autofac einbinden
         private WindowManager windowManager = WindowManager.GetInstance();
 
         public TabService()
         {
             Post["/chrome"] = SetChromeTabs;
+            Post["/firefox"] = SetFirefoxTabs;
             Get["/test"] = Test;
+        }
+
+        private string SetFirefoxTabs(dynamic parameters)
+        {
+            return SetTabs(parameters, "- Mozilla Firefox", "firefox");
+        }
+
+        private string SetChromeTabs(dynamic parameters)
+        {
+            return SetTabs(parameters, "- Google Chrome", "chrome");
         }
 
         private string Test(dynamic parameters)
@@ -25,7 +35,7 @@ namespace Sprung.Tabs
             return "ok";
         }
 
-        private string SetChromeTabs(dynamic parameters)
+        private string SetTabs(dynamic parameters, string windowTitleSuffix, string processName)
         {
             string body = this.Request.Body.AsString();
             JArray tabs = JArray.Parse(body);
@@ -42,7 +52,7 @@ namespace Sprung.Tabs
 
                 Dictionary<string, int> windowTitleToWindowId = new Dictionary<string, int>();
                 IntPtr handle = IntPtr.Zero;
-                
+
                 TabWindow currentTab = tabList.Where(tab => tab.IsCurrent).FirstOrDefault();
 
                 if (currentTab == null)
@@ -50,12 +60,13 @@ namespace Sprung.Tabs
                     return string.Empty;
                 }
 
-                string currentTabTitle = currentTab.TitleRaw;
+                string currentTabTitle = currentTab.TitleRaw.Trim();
                 int currentTabIndex = currentTab.Index;
 
-                foreach(Window window in windowManager.getWindows())
+                foreach (Window window in windowManager.getWindows())
                 {
-                    string titleWithoutProgramName = window.TitleRaw.Replace(" - Google Chrome", "");
+                    string titleWithoutProgramName = window.TitleRaw.Replace(windowTitleSuffix, string.Empty).Trim();
+
                     if (currentTabTitle == titleWithoutProgramName)
                     {
                         handle = window.Handle;
@@ -74,8 +85,8 @@ namespace Sprung.Tabs
                     tab.Handle = handle;
                     int processId = tab.GetWindowProcessId(tab.Handle.ToInt32());
                     tab.Process = Process.GetProcessById(processId);
-                    tab.ProcessName = "chrome";
-                    tab.Title = tab.TitleRaw + " - Google Chrome";
+                    tab.ProcessName = processName;
+                    tab.Title = tab.TitleRaw + windowTitleSuffix;
                     tab.CurrentTabIndex = currentTabIndex;
                 }
 
