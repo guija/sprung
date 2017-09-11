@@ -30,8 +30,6 @@ To enable tab support you have to install the sprung extension for your specific
 
 At the moment the following browsers are supported:
 - [Google Chrome](https://github.com/guija/sprung-chrome)
-
-The extensions for the following browsers are currently under development:
 - [Mozilla Firefox](https://github.com/guija/sprung-firefox)
 
 We are looking for developers willing to write extensions for the following browsers:
