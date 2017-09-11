@@ -32,7 +32,7 @@ namespace Sprung
 
         public Settings()
         {
-            load();
+            LoadFromFile();
         }
 
         public static Settings GetInstance()
@@ -41,7 +41,7 @@ namespace Sprung
         }
 
         // TODO constants
-        public void load()
+        public void LoadFromFile()
         {
             try
             {

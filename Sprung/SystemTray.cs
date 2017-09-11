@@ -10,7 +10,7 @@ using System.ComponentModel;
 
 namespace Sprung
 {
-    class SystemTray
+    public class SystemTray
     {
         private NotifyIcon symbol;
         private ContextMenuStrip contextMenuStrip;
@@ -91,7 +91,7 @@ namespace Sprung
 
         private void ReloadSettings(object sender, EventArgs e)
         {
-            settings.load();
+            settings.LoadFromFile();
         }
     }
 }

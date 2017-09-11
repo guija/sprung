@@ -27,11 +27,11 @@ namespace Sprung
 
         public object TabsLock { get; set; } = new object();
 
-        public List<Window> getWindowsWithTabs()
+        public List<Window> GetWindowsWithTabs()
         {
             lock (TabsLock)
             {
-                List<Window> windows = getWindows();
+                List<Window> windows = GetWindows();
                 List<Window> windowsWithTabs = new List<Window>();
 
                 foreach (Window window in windows)
@@ -50,7 +50,7 @@ namespace Sprung
             }
         }
 
-        public List<Window> getWindows()
+        public List<Window> GetWindows()
         {
             windows.Clear();
             EnumDelegate callback = new EnumDelegate(EnumWindowsProc);
@@ -61,7 +61,8 @@ namespace Sprung
             }
 
             List<Window> filteredWindows = FilterWindows10ApplicationFrameHostWindows(windows);
-            return filteredWindows;
+            windows = filteredWindows;
+            return windows;
         }
 
         private List<Window> FilterWindows10ApplicationFrameHostWindows(List<Window> windows)

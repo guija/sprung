@@ -149,11 +149,11 @@ namespace Sprung
 
                 if ((int)m.WParam == 1)
                 {
-                    this.cachedWindows = windowManager.getWindows();
+                    this.cachedWindows = windowManager.GetWindows();
                 }
                 else if ((int)m.WParam == 2)
                 {
-                    this.cachedWindows = windowManager.getWindowsWithTabs();
+                    this.cachedWindows = windowManager.GetWindowsWithTabs();
                 }
                 else
                 {

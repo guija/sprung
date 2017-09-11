@@ -19,7 +19,7 @@ namespace Sprung
             // TODO getWIndows oder getWindow with Tabs?
             // nur ueber config steuern ob tabs verwendet werden oder nicht?
             // oder hier noch param listTabs einfuegen?
-            return match(pattern, windowManager.getWindows());
+            return match(pattern, windowManager.GetWindows());
         }
 
         public List<Window> match(String pattern, List<Window> windows)
