@@ -21,8 +21,8 @@ Here is a simple demo of how Sprung works:
 
 ## Shortcuts
 There are two shortcuts:
-`Alt+Space`: Open Sprung Window Switcher  
-`Alt+Shift+Space`: Open Sprung Window Switcher and list tabs for each browser as own windows  
+- `Alt+Space`: Open Sprung Window Switcher  
+- `Alt+Shift+Space`: Open Sprung Window Switcher and list tabs for each browser as own windows  
 
 ## Tabs support
 With sprung you can also switch to any tab openend in a browser by using the shortcut `Alt+Shift+Space` or if you have tabs enabled by default in the settings (See settings section).
