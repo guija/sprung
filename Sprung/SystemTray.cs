@@ -6,19 +6,20 @@ using System.Text;
 using System.Windows.Forms;
 using Sprung.Properties;
 using System.Diagnostics;
+using System.ComponentModel;
 
 namespace Sprung
 {
     class SystemTray
     {
         private NotifyIcon symbol;
-        private ContextMenuStrip cms;
+        private ContextMenuStrip contextMenuStrip;
         private Settings settings;
 
         public SystemTray(Settings settings)
         {
             this.symbol = new NotifyIcon();
-            this.cms = new ContextMenuStrip();
+            this.contextMenuStrip = new ContextMenuStrip();
             this.settings = settings;
             InitializeSystemTray();
         }
@@ -37,22 +38,45 @@ namespace Sprung
             settings.Text = "Settings";
             exit.Text = "Exit";
 
-            cms.Items.Add(help);
-            cms.Items.Add(settings);
-            cms.Items.Add(reloadSettings);
-            cms.Items.Add(exit);
+            contextMenuStrip.Items.Add(help);
+            contextMenuStrip.Items.Add(settings);
+            contextMenuStrip.Items.Add(reloadSettings);
+            contextMenuStrip.Items.Add(exit);
 
             help.Click += HelpCallback;
-            exit.Click += new EventHandler(this.exit);
-            reloadSettings.Click += new EventHandler(this.reloadSettings);
+            exit.Click += new EventHandler(this.ExitCallback);
+            reloadSettings.Click += new EventHandler(this.ReloadSettings);
             settings.Click += SettingsCallback;
 
-            symbol.ContextMenuStrip = cms;
+            symbol.ContextMenuStrip = contextMenuStrip;
         }
 
         private void SettingsCallback(object sender, EventArgs e)
         {
-            Process.Start("settings.json");
+            string sprungFolder = AppDomain.CurrentDomain.BaseDirectory;
+            string settingsFile = sprungFolder + "settings.json";
+            string editorExecutable = @"C:\Windows\Notepad.exe";
+
+            ProcessStartInfo info = new ProcessStartInfo(editorExecutable, settingsFile);
+            info.UseShellExecute = true;
+            info.Verb = "runas";
+
+            try
+            {
+                Process.Start(info);
+            }
+            catch (Win32Exception exception)
+            {
+                const int ERROR_CANCELLED = 1223; // 1223 --> The operation was canceled by the user.
+                if (exception.NativeErrorCode == ERROR_CANCELLED)
+                {
+                    MessageBox.Show("You only can edit the Sprung settings.json configuration file as a administrator");
+                }
+                else
+                {
+                    throw;
+                }
+            }
         }
 
         private void HelpCallback(object sender, EventArgs e)
@@ -60,12 +84,12 @@ namespace Sprung
             Process.Start("https://github.com/guija/sprung/");
         }
 
-        private void exit(object sender, EventArgs e)
+        private void ExitCallback(object sender, EventArgs e)
         {
             Application.Exit();
         }
 
-        private void reloadSettings(object sender, EventArgs e)
+        private void ReloadSettings(object sender, EventArgs e)
         {
             settings.load();
         }
