@@ -18,6 +18,12 @@ namespace Sprung.Tabs
             Post["/chrome"] = SetChromeTabs;
             Post["/firefox"] = SetFirefoxTabs;
             Get["/test"] = Test;
+
+            // Allow CORS, so that extension are able to get answer
+            After.AddItemToEndOfPipeline(ctx => ctx.Response
+                .WithHeader("Access-Control-Allow-Origin", "*")
+                .WithHeader("Access-Control-Allow-Methods", "POST,GET")
+                .WithHeader("Access-Control-Allow-Headers", "Accept, Origin, Content-type"));
         }
 
         private string SetFirefoxTabs(dynamic parameters)
