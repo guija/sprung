@@ -24,7 +24,7 @@ namespace Sprung
         private Window lastUsedWindow = null;
 
         private const string TabServiceHost = "localhost";
-        private const int TabServicePort = 1234;
+        private const int TabServicePort = 8212;
         private NancyHost tabService = null;
 
         const int MOD_ALT = 0x0001;
