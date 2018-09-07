@@ -22,6 +22,7 @@ namespace Sprung
         private Settings settings = null;
         private List<Window> cachedWindows = null;
         private Window lastUsedWindow = null;
+        private volatile bool inClosingProcess = false;
 
         private const string TabServiceHost = "localhost";
         private const int TabServicePort = 8212;
@@ -73,13 +74,20 @@ namespace Sprung
         {
             if (e.KeyCode == Keys.Escape)
             {
+                Debug.WriteLine("global key");
                 HideBox();
+
                 if (lastUsedWindow != null)
                 {
                     lastUsedWindow.SendToFront();
                     lastUsedWindow = null;
                 }
             }
+        }
+
+        private bool IsSearchBoxInForeground()
+        {
+            return GetForegroundWindow() == this.Handle;
         }
 
         private void LoadCallback(object sender, EventArgs e)
@@ -204,6 +212,13 @@ namespace Sprung
             this.Opacity = 0;
         }
 
+        private void ShowBox()
+        {
+            // hide main window
+            this.Visible = true;
+            this.Opacity = 100;
+        }
+
         public void CloseSelectedWindow()
         {
             Window selectedWindow = GetSelectedWindow();
@@ -213,7 +228,31 @@ namespace Sprung
                 return;
             }
 
-            selectedWindow.Close();
+            // Synchronisation here is needed since the loose focus event would hide the 
+            // window after sending it to the front (The deactivate event is triggered / processed
+            // after Close and Before SendToFront.
+            // This happens when we try to close a window but that window e.g. opens
+            // a dialog on closing ("e.g. are you sure you want to close this file?").
+            // Then the Sprung search window looses focus to the window to be closed and the
+            // deactivate event is triggered.
+            // We use a volatile Variable instead of a lock because "inClosingProcess" we dont
+            // want to synchronize, we rather want the deactivate event to be ignored completely
+            // and not be processed afterwards. See the usage of the variable "inClosingProcess"
+            // in the event handler.
+            inClosingProcess = true;
+            bool isClosed = selectedWindow.Close();
+            this.mainWindow.SendToFront();
+            inClosingProcess = false;
+
+            if (isClosed)
+            {
+                // Remove the item from the list
+                int indexOfClosedWindow = GetSelectedWindowIndex() ?? 0;
+                windowListBox.Items.RemoveAt(indexOfClosedWindow);
+
+                // Select previous item
+                windowListBox.SelectedIndex = Math.Max(0, indexOfClosedWindow - 1);
+            }
         }
 
         public void SendSelectedWindowToFront()
@@ -258,6 +297,12 @@ namespace Sprung
         // Hides window when the main windows loses the focus
         private void DeactivateCallback(object sender, EventArgs e)
         {
+            if (inClosingProcess)
+            {
+                return;
+            }
+            
+            Debug.WriteLine("lost focus");
             this.HideBox();
         }
 
@@ -266,5 +311,8 @@ namespace Sprung
 
         [DllImport("user32.dll")]
         private static extern bool UnregisterHotKey(IntPtr hWnd, int id);
+
+        [DllImport("user32.dll", CharSet = CharSet.Auto, ExactSpelling = true)]
+        public static extern IntPtr GetForegroundWindow();
     }
 }

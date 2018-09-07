@@ -81,9 +81,11 @@ namespace Sprung
             AttachThreadInput(foreThread, appThread, false);
         }
 
-        public void Close()
+        // Returns true if closing was successfull
+        public bool Close()
         {
             SendMessage(Handle, WM_CLOSE, IntPtr.Zero, IntPtr.Zero);
+            return !IsWindow(Handle);
         }
 
         public Int32 GetWindowProcessId(Int32 handle)
@@ -132,6 +134,9 @@ namespace Sprung
 
         [DllImport("user32.dll", EntryPoint = "GetWindowText", ExactSpelling = false, CharSet = CharSet.Auto, SetLastError = true)]
         private static extern int _GetWindowText(IntPtr hWnd, StringBuilder lpWindowText, int nMaxCount);
+
+        [DllImport("user32.dll")]
+        static extern bool IsWindow(IntPtr hWnd);
 
         [DllImport("User32.dll")]
         public static extern Int32 SetForegroundWindow(int hWnd);
