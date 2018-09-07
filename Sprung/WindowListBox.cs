@@ -31,40 +31,48 @@ namespace Sprung
             Sprung.SendSelectedWindowToFront();
         }
 
+        protected override void OnKeyDown(KeyEventArgs e)
+        {
+            base.OnKeyDown(e);
+        }
+
         protected override void OnDrawItem(DrawItemEventArgs e)
         {
-            if (e.Index >= 0 && e.Index < Items.Count)
+            // Check if no windows selected yet
+            if(e.Index < 0 || e.Index >= Items.Count)
             {
-                this.ItemHeight = newItemHeight;
-                Window window = Items[e.Index] as Window;
-
-                // use modified title?
-                String title = window.TitleRaw.Replace("&", "&&");
-                String processName = window.ProcessName.Replace("&", "&&");
-
-                e.DrawBackground();
-
-                // Draw icon
-                Icon icon = window.GetIcon();
-                if (icon != null)
-                {
-                    Image image = (Image)new Bitmap(icon.ToBitmap(), new Size(iconSize, iconSize));
-                    e.Graphics.DrawImage(image, iconMargin, e.Bounds.Y + iconMargin);
-                }
-
-                // Draw window title
-                Rectangle titleRect = e.Bounds;
-                titleRect.Height /= 2;
-                titleRect.X += iconSize + 3 * iconMargin;
-                titleRect.Width -= iconSize + 3 * iconMargin;
-                TextRenderer.DrawText(e.Graphics, title, titleFont, titleRect, e.ForeColor, titleFlags);
-
-                // Draw process name title
-                Rectangle processRect = titleRect;
-                processRect.Y += processRect.Height;
-                TextRenderer.DrawText(e.Graphics, processName, processFont, processRect, processColor, processFlags);
-                e.DrawFocusRectangle();
+                return;
             }
+            
+            this.ItemHeight = newItemHeight;
+            Window window = Items[e.Index] as Window;
+
+            // use modified title?
+            String title = window.TitleRaw.Replace("&", "&&");
+            String processName = window.ProcessName.Replace("&", "&&");
+
+            e.DrawBackground();
+
+            // Draw icon
+            Icon icon = window.GetIcon();
+            if (icon != null)
+            {
+                Image image = (Image)new Bitmap(icon.ToBitmap(), new Size(iconSize, iconSize));
+                e.Graphics.DrawImage(image, iconMargin, e.Bounds.Y + iconMargin);
+            }
+
+            // Draw window title
+            Rectangle titleRect = e.Bounds;
+            titleRect.Height /= 2;
+            titleRect.X += iconSize + 3 * iconMargin;
+            titleRect.Width -= iconSize + 3 * iconMargin;
+            TextRenderer.DrawText(e.Graphics, title, titleFont, titleRect, e.ForeColor, titleFlags);
+
+            // Draw process name title
+            Rectangle processRect = titleRect;
+            processRect.Y += processRect.Height;
+            TextRenderer.DrawText(e.Graphics, processName, processFont, processRect, processColor, processFlags);
+            e.DrawFocusRectangle();
         }
     }
 }

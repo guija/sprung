@@ -13,6 +13,7 @@ namespace Sprung
         protected const uint SW_SHOWMAXIMIZED = 3;
         protected const uint SW_SHOW = 5;
         protected const uint SW_RESTORE = 9;
+        protected const uint WM_CLOSE = 0x0010;
         protected const int WINDOW_TITLE_MAX_CHARS = 255;
 
         public IntPtr Handle { get; set; }
@@ -78,6 +79,11 @@ namespace Sprung
             BringWindowToTop(this.Handle);
             SetForegroundWindow(this.Handle.ToInt32());
             AttachThreadInput(foreThread, appThread, false);
+        }
+
+        public void Close()
+        {
+            SendMessage(Handle, WM_CLOSE, IntPtr.Zero, IntPtr.Zero);
         }
 
         public Int32 GetWindowProcessId(Int32 handle)
@@ -152,6 +158,9 @@ namespace Sprung
         [DllImport("user32.dll", SetLastError = true)]
         [return: MarshalAs(UnmanagedType.Bool)]
         internal static extern bool GetWindowPlacement(IntPtr hWnd, ref WINDOWPLACEMENT lpwndpl);
+
+        [DllImport("user32.dll", CharSet = CharSet.Auto)]
+        private static extern IntPtr SendMessage(IntPtr hWnd, UInt32 Msg, IntPtr wParam, IntPtr lParam);
 
         [Serializable]
         [StructLayout(LayoutKind.Sequential)]

@@ -183,6 +183,10 @@ namespace Sprung
             {
                 this.windowListBox.SelectedIndex--;
             }
+            else if (e.KeyCode == Keys.Delete)
+            {
+                CloseSelectedWindow();
+            }
         }
 
         private void SearchBoxKeyPress(object sender, KeyPressEventArgs e)
@@ -200,16 +204,55 @@ namespace Sprung
             this.Opacity = 0;
         }
 
+        public void CloseSelectedWindow()
+        {
+            Window selectedWindow = GetSelectedWindow();
+
+            if (selectedWindow == null)
+            {
+                return;
+            }
+
+            selectedWindow.Close();
+        }
+
         public void SendSelectedWindowToFront()
+        {
+            Window selectedWindow = GetSelectedWindow();
+
+            if (selectedWindow == null)
+            {
+                return;
+            }
+
+            selectedWindow.SendToFront();
+        }
+
+        private int? GetSelectedWindowIndex()
         {
             if (this.windowListBox.Items.Count > 0)
             {
-                // show window that was selected
-                int selectedIndex = this.windowListBox.SelectedIndex;
-                selectedIndex = selectedIndex == -1 ? 0 : selectedIndex;
-                Window selectedWindow = (Window) this.windowListBox.Items[selectedIndex];
-                selectedWindow.SendToFront();
+                // If no entry was selected yet but there are items in the list
+                // then take the first one
+                int selectedIndex = Math.Max(0, this.windowListBox.SelectedIndex);
+                return selectedIndex;
             }
+
+            return null;
+        }
+
+        private Window GetSelectedWindow()
+        {
+            int? selectedIndex = GetSelectedWindowIndex();
+
+            if (!selectedIndex.HasValue)
+            {
+                return null;
+            }
+
+            Window selectedWindow = (Window)this.windowListBox.Items[selectedIndex.Value];
+
+            return selectedWindow;
         }
 
         // Hides window when the main windows loses the focus
