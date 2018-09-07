@@ -51,7 +51,7 @@ namespace Sprung
             this.windowListBox.Sprung = this;
 
             // new Thread(StartTabService).Start();
-            StartTabService();
+            // StartTabService();
         }
 
         private void StartTabService()

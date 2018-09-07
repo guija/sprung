@@ -83,7 +83,7 @@ namespace Sprung
                 if (wrapperWindow != null)
                 {
                     // The wrapper window has the real process name, take that process name and replace the
-                    // "ApplicationFrameHost" processn name of the windows 10 app window
+                    // "ApplicationFrameHost" process name of the windows 10 app window
                     wrapperWindow.ProcessName = window.ProcessName;
                     continue;
                 }

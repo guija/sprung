@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.26430.15
+VisualStudioVersion = 15.0.27130.2027
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sprung", "Sprung\Sprung.csproj", "{7249A4ED-3C99-49FC-9144-92F2AFEB5252}"
 EndProject
@@ -15,9 +15,9 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{7249A4ED-3C99-49FC-9144-92F2AFEB5252}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{7249A4ED-3C99-49FC-9144-92F2AFEB5252}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{7249A4ED-3C99-49FC-9144-92F2AFEB5252}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
+		{7249A4ED-3C99-49FC-9144-92F2AFEB5252}.Debug|Any CPU.ActiveCfg = Debug|x64
+		{7249A4ED-3C99-49FC-9144-92F2AFEB5252}.Debug|Any CPU.Build.0 = Debug|x64
+		{7249A4ED-3C99-49FC-9144-92F2AFEB5252}.Debug|Any CPU.Deploy.0 = Debug|x64
 		{7249A4ED-3C99-49FC-9144-92F2AFEB5252}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7249A4ED-3C99-49FC-9144-92F2AFEB5252}.Release|Any CPU.Build.0 = Release|Any CPU
 		{6D924EC3-00D1-44A4-939D-0CDAEB1F5136}.Debug|Any CPU.ActiveCfg = Debug
@@ -27,5 +27,8 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {ADDFDF9C-9774-49C5-A802-C3CBDB7FC403}
 	EndGlobalSection
 EndGlobal
