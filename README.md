@@ -24,6 +24,15 @@ There are two shortcuts:
 - `Alt+Space`: Open Sprung Window Switcher  
 - `Alt+Shift+Space`: Open Sprung Window Switcher and list tabs for each browser as own windows  
 
+## Controls
+Once Sprung was opened with the Shortcut you can navigate with the following keys:
+- `Arrow Down`: Select next window
+- `Arrow Up`: Select previous window
+- `Return`: Focus currently selected window and close Sprung
+- `Delete`: Close currently selected window and focus Sprung
+- `Escape`: Close Sprung
+- `Click on a window item`: Select the window clicked on
+
 ## Tabs support
 With sprung you can also switch to any tab openend in a browser by using the shortcut `Alt+Shift+Space` or if you have tabs enabled by default in the settings (See settings section).
 To enable tab support you have to install the sprung extension for your specific browser.
