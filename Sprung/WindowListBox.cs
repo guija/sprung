@@ -6,7 +6,6 @@ namespace Sprung
 {
     public class WindowListBox : ListBox
     {
-        private const int iconSize = 30;
         private const int newItemHeight = 36;
         private int iconMargin = 0;
         private const string DefaultFontName = "Arial";
@@ -21,7 +20,7 @@ namespace Sprung
         public WindowListBox()
         {
             this.DrawMode = DrawMode.OwnerDrawVariable;
-            iconMargin = (newItemHeight - iconSize) / 2;
+            iconMargin = (newItemHeight - Window.IconSize) / 2;
             this.ItemHeight = newItemHeight;
         }
 
@@ -47,25 +46,25 @@ namespace Sprung
             this.ItemHeight = newItemHeight;
             Window window = Items[e.Index] as Window;
 
-            // use modified title?
+            // Title fixes
             String title = window.TitleRaw.Replace("&", "&&");
             String processName = window.ProcessName.Replace("&", "&&");
 
             e.DrawBackground();
 
             // Draw icon
-            Icon icon = window.GetIcon();
-            if (icon != null)
+            Image iconImage = window.GetIconImage();
+
+            if (iconImage != null)
             {
-                Image image = (Image)new Bitmap(icon.ToBitmap(), new Size(iconSize, iconSize));
-                e.Graphics.DrawImage(image, iconMargin, e.Bounds.Y + iconMargin);
+                e.Graphics.DrawImage(iconImage, iconMargin, e.Bounds.Y + iconMargin);
             }
 
             // Draw window title
             Rectangle titleRect = e.Bounds;
             titleRect.Height /= 2;
-            titleRect.X += iconSize + 3 * iconMargin;
-            titleRect.Width -= iconSize + 3 * iconMargin;
+            titleRect.X += Window.IconSize + 3 * iconMargin;
+            titleRect.Width -= Window.IconSize + 3 * iconMargin;
             TextRenderer.DrawText(e.Graphics, title, titleFont, titleRect, e.ForeColor, titleFlags);
 
             // Draw process name title

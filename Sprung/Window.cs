@@ -15,6 +15,7 @@ namespace Sprung
         protected const uint SW_RESTORE = 9;
         protected const uint WM_CLOSE = 0x0010;
         protected const int WINDOW_TITLE_MAX_CHARS = 255;
+        public const int IconSize = 30;
 
         public IntPtr Handle { get; set; }
 
@@ -28,6 +29,8 @@ namespace Sprung
         public Process Process { get; set; }
 
         protected Icon icon = null;
+
+        protected Image iconImage = null;
 
         public int MatchingPriority { get; set; } = 0;
 
@@ -103,6 +106,18 @@ namespace Sprung
                     : (MatchingGroups < other.MatchingGroups) 
                         ? -1 
                         : (MatchingGroups > other.MatchingGroups) ? 1 : 0;
+        }
+
+        public Image GetIconImage()
+        {
+            Icon icon = GetIcon();
+
+            if (icon == null)
+            {
+                return null;
+            }
+
+            return (iconImage = (Image)new Bitmap(icon.ToBitmap(), new Size(IconSize, IconSize)));
         }
 
         public Icon GetIcon()
