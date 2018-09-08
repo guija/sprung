@@ -19,7 +19,9 @@ You can configure the shortcut yourself (See Settings below)
 
 ### Portable version
 Alternatively you can download a portable version on https://github.com/guija/sprung/releases/latest
-Unpack the zip file.
+
+Unpack the zip file and execute `Sprung.exe`.
+
 To enable Sprung to run on every startup:
 1. Navigate to your Startup folder (`Win+R` and type `shell:startup`)
 2. Place a shortcut to the Sprung.exe inside the startup folder.
