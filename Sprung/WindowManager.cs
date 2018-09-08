@@ -68,6 +68,7 @@ namespace Sprung
         private List<Window> FilterWindows10ApplicationFrameHostWindows(List<Window> windows)
         {
             List<Window> filteredList = new List<Window>();
+
             foreach (Window window in windows)
             {
                 if(window.ProcessName == "ApplicationFrameHost")

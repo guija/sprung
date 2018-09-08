@@ -71,21 +71,20 @@ namespace Sprung
             uint appThread = GetCurrentThreadId();
             AttachThreadInput(foreThread, appThread, true);
             Application.DoEvents();
-            WINDOWPLACEMENT p = GetPlacement(this.Handle);
-            if (p.showCmd == ShowWindowCommands.Maximized) ShowWindow(this.Handle, SW_SHOWMAXIMIZED);
-            else if (p.showCmd == ShowWindowCommands.Minimized) ShowWindow(this.Handle, SW_RESTORE);
-            else if (p.showCmd == ShowWindowCommands.Normal) ShowWindow(this.Handle, SW_SHOW);
-            else ShowWindow(this.Handle, SW_SHOW);
-            BringWindowToTop(this.Handle);
-            SetForegroundWindow(this.Handle.ToInt32());
+            WINDOWPLACEMENT placement = GetPlacement(Handle);
+            if (placement.showCmd == ShowWindowCommands.Maximized) ShowWindow(Handle, SW_SHOWMAXIMIZED);
+            else if (placement.showCmd == ShowWindowCommands.Minimized) ShowWindow(Handle, SW_RESTORE);
+            else if (placement.showCmd == ShowWindowCommands.Normal) ShowWindow(Handle, SW_SHOW);
+            else ShowWindow(Handle, SW_SHOW);
+            BringWindowToTop(Handle);
+            SetForegroundWindow(Handle.ToInt32());
             AttachThreadInput(foreThread, appThread, false);
         }
 
         // Returns true if closing was successfull
-        public bool Close()
+        public void Close()
         {
             SendMessage(Handle, WM_CLOSE, IntPtr.Zero, IntPtr.Zero);
-            return !IsWindow(Handle);
         }
 
         public Int32 GetWindowProcessId(Int32 handle)

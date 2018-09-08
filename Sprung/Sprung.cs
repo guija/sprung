@@ -10,6 +10,7 @@ using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Threading;
 using Nancy.Hosting.Self;
+using System.Collections.Concurrent;
 
 namespace Sprung
 {
@@ -23,6 +24,8 @@ namespace Sprung
         private List<Window> cachedWindows = null;
         private Window lastUsedWindow = null;
         private volatile bool inClosingProcess = false;
+        private readonly int windowMessageNotifyShellHook;
+        private ConcurrentDictionary<IntPtr, bool> closedWindowHandles = null;
 
         private const string TabServiceHost = "localhost";
         private const int TabServicePort = 8212;
@@ -32,6 +35,9 @@ namespace Sprung
         const int MOD_CONTROL = 0x0002;
         const int MOD_SHIFT = 0x0004;
         const int WM_HOTKEY = 0x0312;
+        const int HSHELL_WINDOWDESTROYED = 0x0002;
+        const int HOTKEY_LIST_WINDOWS = 0x0001;
+        const int HOTKEY_LIST_WINDOWS_WITH_TABS = 0x0002;
 
         public Sprung()
         {
@@ -45,11 +51,15 @@ namespace Sprung
             this.ControlBox = false;
             this.ShowInTaskbar = false;
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
-            this.mainWindow = new Window(this.Handle);
+            this.mainWindow = new Window(Handle);
             this.Deactivate += DeactivateCallback;
             this.KeyPreview = true;
             this.KeyDown += GlobalKeyDown;
             this.windowListBox.Sprung = this;
+            closedWindowHandles = new ConcurrentDictionary<IntPtr, bool>();
+
+            windowMessageNotifyShellHook = RegisterWindowMessage("SHELLHOOK");
+            RegisterShellHookWindow(Handle);
 
             // new Thread(StartTabService).Start();
             // StartTabService();
@@ -119,8 +129,9 @@ namespace Sprung
 
         private void ExitCallback(object sender, EventArgs e)
         {
-            UnregisterHotKey(this.Handle, 1);
-            UnregisterHotKey(this.Handle, 2);
+            UnregisterHotKey(Handle, HOTKEY_LIST_WINDOWS);
+            UnregisterHotKey(Handle, HOTKEY_LIST_WINDOWS_WITH_TABS);
+            DeregisterShellHookWindow(Handle);
             Application.Exit();
         }
 
@@ -141,38 +152,108 @@ namespace Sprung
             {
                 windowListBox.SelectedIndex = 0;
             }
+
+            closedWindowHandles.Clear();
         }
 
         protected override void WndProc(ref Message m)
         {
-            if(m.Msg == WM_HOTKEY && ((int) m.WParam == 1 || (int)m.WParam == 2))
+            if (m.Msg == windowMessageNotifyShellHook)
             {
-                this.Visible = true;
-                this.Opacity = 100;
-                this.CenterToScreen();
-                this.mainWindow.SendToFront();
-                this.Activate();
-                this.searchBox.Focus();
-                this.searchBox.Text = "";
+                int code = m.WParam.ToInt32();
+                IntPtr handle = m.LParam;
+                HandleDestroyedWindowEvent(code, handle);
+            }
 
-                if ((int)m.WParam == 1)
-                {
-                    this.cachedWindows = windowManager.GetWindows();
-                }
-                else if ((int)m.WParam == 2)
-                {
-                    this.cachedWindows = windowManager.GetWindowsWithTabs();
-                }
-                else
-                {
-                    Debug.WriteLine("Unknown key combination, should never happend");
-                }
-                
-                ShowProcesses(this.cachedWindows);
-                lastUsedWindow = this.cachedWindows.FirstOrDefault();
+            if (m.Msg == WM_HOTKEY)
+            {
+                int shortcutCode = (int)m.WParam;
+                HandleGlobalHotkey(shortcutCode);
             }
 
             base.WndProc(ref m);
+        }
+
+        private void HandleDestroyedWindowEvent(int shellHookEventCode, IntPtr handle)
+        {
+            if (shellHookEventCode != HSHELL_WINDOWDESTROYED)
+            {
+                return;
+            }
+
+            IntPtr closedWindowHandle = handle;
+
+            if (!closedWindowHandles.ContainsKey(closedWindowHandle))
+            {
+                return;
+            }
+
+            bool contains = false; // Can be ignore, we do not need the value to be retrieved.
+            while (!closedWindowHandles.TryRemove(closedWindowHandle, out contains)) ;
+
+            // Remove from list
+            for (int i = 0; i <= windowListBox.Items.Count; i++)
+            {
+                var window = windowListBox.Items[i] as Window;
+
+                if (window.Handle != closedWindowHandle)
+                {
+                    continue;
+                }
+
+                windowListBox.Items.RemoveAt(i);
+
+                if (windowListBox.SelectedIndex >= 0 && windowListBox.SelectedIndex < i)
+                {
+                    // Nothing to do
+                }
+                else
+                {
+                    if (windowListBox.Items.Count == 0)
+                    {
+                        windowListBox.SelectedIndex = -1;
+                    }
+                    else
+                    {
+                        // Select previous item
+                        windowListBox.SelectedIndex = Math.Max(0, i - 1);
+                    }
+                }
+
+                break;
+            }
+        }
+
+        private void HandleGlobalHotkey(int shortcutCode)
+        {
+            if (shortcutCode != HOTKEY_LIST_WINDOWS && shortcutCode != HOTKEY_LIST_WINDOWS_WITH_TABS)
+            {
+                return;
+            }
+
+            this.Visible = true;
+            this.Opacity = 100;
+            this.CenterToScreen();
+            this.mainWindow.SendToFront();
+            this.Activate();
+            this.searchBox.Focus();
+            this.searchBox.Text = "";
+
+            if (shortcutCode == HOTKEY_LIST_WINDOWS)
+            {
+                this.cachedWindows = windowManager.GetWindows();
+            }
+            else if (shortcutCode == HOTKEY_LIST_WINDOWS_WITH_TABS)
+            {
+                this.cachedWindows = windowManager.GetWindowsWithTabs();
+            }
+            else
+            {
+                Debug.WriteLine("Unknown key combination, should never happend");
+            }
+
+            ShowProcesses(this.cachedWindows);
+            lastUsedWindow = this.cachedWindows.FirstOrDefault();
         }
 
         private void SearchBoxKeyDown(object sender, KeyEventArgs e)
@@ -194,6 +275,10 @@ namespace Sprung
             else if (e.KeyCode == Keys.Delete)
             {
                 CloseSelectedWindow();
+
+                // Mark the event as handled, otherwise the search input
+                // will be modified and the list will be reloaded
+                e.Handled = true;
             }
         }
 
@@ -240,19 +325,16 @@ namespace Sprung
             // and not be processed afterwards. See the usage of the variable "inClosingProcess"
             // in the event handler.
             inClosingProcess = true;
-            bool isClosed = selectedWindow.Close();
+
+            // Add the handle of the window that we want to close to a concurrent dictionary
+            // so that we know which windows we actually want to close. As soon as the
+            // destroyed event is intercepted we know that the window got closed
+            // and we can remove it from the list. We use a dictionary instead of a HashSet
+            // because C# does not provide a concurrent hash set.
+            closedWindowHandles[selectedWindow.Handle] = true;
+            selectedWindow.Close();
             this.mainWindow.SendToFront();
             inClosingProcess = false;
-
-            if (isClosed)
-            {
-                // Remove the item from the list
-                int indexOfClosedWindow = GetSelectedWindowIndex() ?? 0;
-                windowListBox.Items.RemoveAt(indexOfClosedWindow);
-
-                // Select previous item
-                windowListBox.SelectedIndex = Math.Max(0, indexOfClosedWindow - 1);
-            }
         }
 
         public void SendSelectedWindowToFront()
@@ -305,6 +387,15 @@ namespace Sprung
             Debug.WriteLine("lost focus");
             this.HideBox();
         }
+
+        [DllImport("user32.dll", EntryPoint = "RegisterWindowMessageA", CharSet = CharSet.Ansi, SetLastError = true, ExactSpelling = true)]
+        public static extern int RegisterWindowMessage(string lpString);
+
+        [DllImport("user32", CharSet = CharSet.Ansi, SetLastError = true, ExactSpelling = true)]
+        public static extern int RegisterShellHookWindow(IntPtr hWnd);
+
+        [DllImport("user32", CharSet = CharSet.Ansi, SetLastError = true, ExactSpelling = true)]
+        public static extern int DeregisterShellHookWindow(IntPtr hWnd);
 
         [DllImport("user32.dll")]
         private static extern bool RegisterHotKey(IntPtr hWnd, int id, int fsModifiers, int vk);
