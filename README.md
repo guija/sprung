@@ -9,11 +9,20 @@ Sprung is intended to be used only with the keyboard. Therefore the UI is delibe
 ## Download
 You can download the Sprung installer from https://github.com/guija/sprung/releases 
 
-## Installation
-Download the installer of the most recent version on https://github.com/guija/sprung/releases  
+## Download and installation
+
+### Installer
+Download the installer of the most recent version on https://github.com/guija/sprung/releases/latest
 Run the installer. The installer will create a shorcut on your desktop and in your user startup folder automatically.
 Enjoy by using the default keyboard shortcut `Alt+Space`  
 You can configure the shortcut yourself (See Settings below)  
+
+### Portable version
+Alternatively you can download a portable version on https://github.com/guija/sprung/releases/latest
+Unpack the zip file.
+To enable Sprung to run on every startup:
+1. Navigate to your Startup folder (`Win+R` and type `shell:startup`)
+2. Place a shortcut to the Sprung.exe inside the startup folder.
 
 ## Demo
 Here is a simple demo of how Sprung works:  
