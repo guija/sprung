@@ -42,7 +42,7 @@ namespace Sprung
         }
 
         // TODO constants
-        [Time]
+        
         public void LoadFromFile()
         {
             try

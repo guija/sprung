@@ -27,8 +27,7 @@ namespace Sprung
         public Dictionary<IntPtr, List<TabWindow>> Tabs { get; set; } = new Dictionary<IntPtr, List<TabWindow>>();
 
         public object TabsLock { get; set; } = new object();
-
-        [Time]
+        
         public List<Window> GetWindowsWithTabs()
         {
             lock (TabsLock)
@@ -51,7 +50,7 @@ namespace Sprung
                 return windowsWithTabs;
             }
         }
-
+        
         [Time]
         public List<Window> GetWindows()
         {
@@ -67,7 +66,7 @@ namespace Sprung
             windows = filteredWindows;
             return windows;
         }
-
+        
         [Time]
         private List<Window> FilterWindows10ApplicationFrameHostWindows(List<Window> windows)
         {

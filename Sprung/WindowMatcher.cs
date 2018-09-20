@@ -15,7 +15,7 @@ namespace Sprung
             this.windowManager = windowManager;
         }
 
-        [Time]
+        
         public List<Window> match(String pattern)
         {
             // TODO getWIndows oder getWindow with Tabs?
@@ -24,7 +24,7 @@ namespace Sprung
             return match(pattern, windowManager.GetWindows());
         }
 
-        [Time]
+        
         public List<Window> match(String pattern, List<Window> windows)
         {
             if (pattern.Length == 0) return windows;

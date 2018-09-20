@@ -66,7 +66,7 @@ namespace Sprung
             // StartTabService();
         }
 
-        [Time]
+        
         private void StartTabService()
         {
             Debug.WriteLine("StartTabService");
@@ -143,7 +143,7 @@ namespace Sprung
             ShowProcesses(windowMatcher.match(pattern, cachedWindows));
         }
 
-        [Time]
+        
         private void ShowProcesses(List<Window> windows)
         {
             windowListBox.BeginUpdate();
@@ -307,7 +307,7 @@ namespace Sprung
             this.Opacity = 100;
         }
 
-        [Time]
+        
         public void CloseSelectedWindow()
         {
             Window selectedWindow = GetSelectedWindow();
