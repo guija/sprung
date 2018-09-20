@@ -5,6 +5,7 @@ using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using System.Drawing;
 using Newtonsoft.Json;
+using MethodTimer;
 
 namespace Sprung
 {
@@ -40,6 +41,7 @@ namespace Sprung
         {
         }
 
+        [Time]
         public Window(IntPtr handle)
         {
             if (handle.Equals(IntPtr.Zero))
@@ -68,6 +70,7 @@ namespace Sprung
             }
         }
 
+        [Time]
         public virtual void SendToFront()
         {
             uint foreThread = GetWindowThreadProcessId(GetForegroundWindow(), IntPtr.Zero);
@@ -90,6 +93,7 @@ namespace Sprung
             SendMessage(Handle, WM_CLOSE, IntPtr.Zero, IntPtr.Zero);
         }
 
+        [Time]
         public Int32 GetWindowProcessId(Int32 handle)
         {
             Int32 pointer = 1;
@@ -108,6 +112,7 @@ namespace Sprung
                         : (MatchingGroups > other.MatchingGroups) ? 1 : 0;
         }
 
+        [Time]
         public Image GetIconImage()
         {
             Icon icon = GetIcon();
@@ -120,6 +125,7 @@ namespace Sprung
             return (iconImage = (Image)new Bitmap(icon.ToBitmap(), new Size(IconSize, IconSize)));
         }
 
+        [Time]
         public Icon GetIcon()
         {
             if (icon != null)

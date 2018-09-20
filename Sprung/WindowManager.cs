@@ -5,6 +5,7 @@ using System.Linq;
 using Sprung.Tabs;
 using System.Collections;
 using System.Diagnostics;
+using MethodTimer;
 
 namespace Sprung
 {
@@ -27,6 +28,7 @@ namespace Sprung
 
         public object TabsLock { get; set; } = new object();
 
+        [Time]
         public List<Window> GetWindowsWithTabs()
         {
             lock (TabsLock)
@@ -50,6 +52,7 @@ namespace Sprung
             }
         }
 
+        [Time]
         public List<Window> GetWindows()
         {
             windows.Clear();
@@ -65,6 +68,7 @@ namespace Sprung
             return windows;
         }
 
+        [Time]
         private List<Window> FilterWindows10ApplicationFrameHostWindows(List<Window> windows)
         {
             List<Window> filteredList = new List<Window>();
@@ -95,6 +99,7 @@ namespace Sprung
             return filteredList;
         }
 
+        [Time]
         private bool EnumWindowsProc(IntPtr hWnd, int lParam)
         {
             if (IsWindowVisible(hWnd)) {

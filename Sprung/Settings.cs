@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using Newtonsoft.Json.Linq;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
+using MethodTimer;
 
 namespace Sprung
 {
@@ -41,6 +42,7 @@ namespace Sprung
         }
 
         // TODO constants
+        [Time]
         public void LoadFromFile()
         {
             try
