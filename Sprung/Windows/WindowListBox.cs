@@ -2,7 +2,7 @@
 using System.Drawing;
 using System.Windows.Forms;
 
-namespace Sprung
+namespace Sprung.Windows
 {
     public class WindowListBox : ListBox
     {

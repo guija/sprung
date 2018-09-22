@@ -7,7 +7,7 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Sprung
+namespace Sprung.Helper
 {
     public static class MethodTimeLogger
     {

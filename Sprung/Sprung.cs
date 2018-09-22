@@ -12,6 +12,7 @@ using System.Threading;
 using Nancy.Hosting.Self;
 using System.Collections.Concurrent;
 using MethodTimer;
+using Sprung.Windows;
 
 namespace Sprung
 {

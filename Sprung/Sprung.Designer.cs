@@ -1,4 +1,6 @@
-﻿namespace Sprung
+﻿using Sprung.Windows;
+
+namespace Sprung
 {
     partial class Sprung
     {

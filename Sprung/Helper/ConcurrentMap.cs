@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Sprung
+namespace Sprung.Helper
 {
     public class ConcurrentMap<K, V>
     {

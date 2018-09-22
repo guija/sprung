@@ -7,8 +7,9 @@ using System.Collections;
 using System.Diagnostics;
 using MethodTimer;
 using System.Collections.Concurrent;
+using Sprung.Helper;
 
-namespace Sprung
+namespace Sprung.Windows
 {
     public class WindowManager
     {
@@ -68,7 +69,6 @@ namespace Sprung
             }
         }
         
-        [Time]
         private List<Window> GetWindows()
         {
             _windows.Clear();
@@ -87,7 +87,6 @@ namespace Sprung
             return (_windows = filteredWindows);
         }
         
-        [Time]
         private List<Window> FilterWindows10ApplicationFrameHostWindows(List<Window> windows)
         {
             List<Window> filteredList = new List<Window>();
@@ -118,7 +117,6 @@ namespace Sprung
             return filteredList;
         }
 
-        [Time]
         private bool EnumWindowsProc(IntPtr hWnd, int lParam)
         {
             if (IsWindowVisible(hWnd)) {

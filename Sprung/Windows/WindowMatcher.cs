@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using MethodTimer;
 
-namespace Sprung
+namespace Sprung.Windows
 {
     class WindowMatcher
     {

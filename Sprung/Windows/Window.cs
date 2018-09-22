@@ -7,7 +7,7 @@ using System.Drawing;
 using Newtonsoft.Json;
 using MethodTimer;
 
-namespace Sprung
+namespace Sprung.Windows
 {
     public class Window : IComparable<Window>
     {
@@ -43,7 +43,6 @@ namespace Sprung
         {
         }
 
-        [Time]
         public Window(IntPtr handle)
         {
             if (handle.Equals(IntPtr.Zero))

@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Sprung
+namespace Sprung.Windows
 {
     public class WindowLastUsageComparer : IComparer<Window>
     { 
