@@ -69,7 +69,7 @@ namespace Sprung.Tabs
                 string currentTabTitle = currentTab.TitleRaw.Trim();
                 int currentTabIndex = currentTab.Index;
 
-                foreach (Window window in windowManager.GetWindows())
+                foreach (Window window in windowManager.Windows.Values())
                 {
                     string titleWithoutProgramName = window.TitleRaw.Replace(windowTitleSuffix, string.Empty).Trim();
 

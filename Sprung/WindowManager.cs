@@ -6,16 +6,33 @@ using Sprung.Tabs;
 using System.Collections;
 using System.Diagnostics;
 using MethodTimer;
+using System.Collections.Concurrent;
 
 namespace Sprung
 {
     public class WindowManager
     {
+        const int HSHELL_WINDOWCREATED = 0x0001;
+        const int HSHELL_WINDOWDESTROYED = 0x0002;
+
         private Settings settings = Settings.GetInstance();
 
-        private List<Window> windows = new List<Window>();
+        private List<Window> _windows = new List<Window>();
+
+        public ConcurrentMap<IntPtr, Window> Windows = new ConcurrentMap<IntPtr, Window>();
 
         private static WindowManager instance = null;
+        
+        public WindowManager()
+        {
+            // Initial loading of currently opened windows because window
+            // list is updated with events so already open windows would not 
+            // be in list.
+            foreach(var window in GetWindows())
+            {
+                Windows.TryAdd(window.Handle, window);
+            }
+        }
 
         public static WindowManager GetInstance()
         {
@@ -28,7 +45,7 @@ namespace Sprung
 
         public object TabsLock { get; set; } = new object();
         
-        public List<Window> GetWindowsWithTabs()
+        private List<Window> GetWindowsWithTabs()
         {
             lock (TabsLock)
             {
@@ -52,19 +69,22 @@ namespace Sprung
         }
         
         [Time]
-        public List<Window> GetWindows()
+        private List<Window> GetWindows()
         {
-            windows.Clear();
+            _windows.Clear();
+
             EnumDelegate callback = new EnumDelegate(EnumWindowsProc);
+
             bool enumDel = EnumDesktopWindows(IntPtr.Zero, callback, IntPtr.Zero);
+
             if (!enumDel)
             {
                 throw new Exception("Calling EnumDesktopWindows: Error ocurred: " + Marshal.GetLastWin32Error());
             }
 
-            List<Window> filteredWindows = FilterWindows10ApplicationFrameHostWindows(windows);
-            windows = filteredWindows;
-            return windows;
+            List<Window> filteredWindows = FilterWindows10ApplicationFrameHostWindows(_windows);
+
+            return (_windows = filteredWindows);
         }
         
         [Time]
@@ -107,7 +127,7 @@ namespace Sprung
 
                 if (!settings.IsWindowTitleExcluded(window.Title) && window.TitleRaw != string.Empty)
                 {
-                    windows.Add(window);
+                    _windows.Add(window);
                 }
             }
 

@@ -37,6 +37,8 @@ namespace Sprung
 
         public int MatchingGroups { get; set; } = 0;
 
+        public DateTime LastActivation { get; set; } = DateTime.Now;
+
         public Window()
         {
         }

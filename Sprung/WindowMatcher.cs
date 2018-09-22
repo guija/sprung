@@ -15,16 +15,6 @@ namespace Sprung
             this.windowManager = windowManager;
         }
 
-        
-        public List<Window> match(String pattern)
-        {
-            // TODO getWIndows oder getWindow with Tabs?
-            // nur ueber config steuern ob tabs verwendet werden oder nicht?
-            // oder hier noch param listTabs einfuegen?
-            return match(pattern, windowManager.GetWindows());
-        }
-
-        
         public List<Window> match(String pattern, List<Window> windows)
         {
             if (pattern.Length == 0) return windows;
@@ -64,6 +54,5 @@ namespace Sprung
             windows.Sort();
             return windows;
         }
-
     }
 }

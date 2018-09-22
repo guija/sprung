@@ -98,6 +98,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ConcurrentMap.cs" />
     <Compile Include="MethodTimerLogger.cs" />
     <Compile Include="Properties\Resources1.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -107,6 +108,7 @@
     <Compile Include="Settings.cs" />
     <Compile Include="Tabs\TabWindow.cs" />
     <Compile Include="Tabs\TabService.cs" />
+    <Compile Include="WindowLastUsageComparer.cs" />
     <Compile Include="WindowListBox.cs">
       <SubType>Component</SubType>
     </Compile>

@@ -17,6 +17,18 @@ namespace Sprung
 {
     public partial class Sprung : Form
     {
+        const int MOD_ALT = 0x0001;
+        const int MOD_CONTROL = 0x0002;
+        const int MOD_SHIFT = 0x0004;
+        const int WM_HOTKEY = 0x0312;
+        const int HSHELL_WINDOWCREATED = 0x0001;
+        const int HSHELL_WINDOWDESTROYED = 0x0002;
+        const int HSHELL_WINDOWACTIVATED = 14;
+        const int HOTKEY_LIST_WINDOWS = 0x0001;
+        const int HOTKEY_LIST_WINDOWS_WITH_TABS = 0x0002;
+        const uint WINEVENT_OUTOFCONTEXT = 0;
+        const uint EVENT_SYSTEM_FOREGROUND = 3;
+
         private WindowManager windowManager = null;
         private SystemTray tray = null;
         private WindowMatcher windowMatcher = null;
@@ -27,18 +39,14 @@ namespace Sprung
         private volatile bool inClosingProcess = false;
         private readonly int windowMessageNotifyShellHook;
         private ConcurrentDictionary<IntPtr, bool> closedWindowHandles = null;
+        private WindowLastUsageComparer windowLastUsageComparer = null;
 
         private const string TabServiceHost = "localhost";
         private const int TabServicePort = 8212;
         private NancyHost tabService = null;
 
-        const int MOD_ALT = 0x0001;
-        const int MOD_CONTROL = 0x0002;
-        const int MOD_SHIFT = 0x0004;
-        const int WM_HOTKEY = 0x0312;
-        const int HSHELL_WINDOWDESTROYED = 0x0002;
-        const int HOTKEY_LIST_WINDOWS = 0x0001;
-        const int HOTKEY_LIST_WINDOWS_WITH_TABS = 0x0002;
+        WinEventDelegate handleActivatedWindowEventDelegate = null;
+        delegate void WinEventDelegate(IntPtr hWinEventHook, uint eventType, IntPtr hwnd, int idObject, int idChild, uint dwEventThread, uint dwmsEventTime);
 
         public Sprung()
         {
@@ -57,13 +65,14 @@ namespace Sprung
             this.KeyPreview = true;
             this.KeyDown += GlobalKeyDown;
             this.windowListBox.Sprung = this;
+            this.windowLastUsageComparer = new WindowLastUsageComparer();
             closedWindowHandles = new ConcurrentDictionary<IntPtr, bool>();
 
             windowMessageNotifyShellHook = RegisterWindowMessage("SHELLHOOK");
             RegisterShellHookWindow(Handle);
 
-            // new Thread(StartTabService).Start();
-            // StartTabService();
+            handleActivatedWindowEventDelegate = new WinEventDelegate(HandleActivatedWindowEvent);
+            IntPtr m_hhook = SetWinEventHook(EVENT_SYSTEM_FOREGROUND, EVENT_SYSTEM_FOREGROUND, IntPtr.Zero, handleActivatedWindowEventDelegate, 0, 0, WINEVENT_OUTOFCONTEXT);
         }
 
         
@@ -165,7 +174,15 @@ namespace Sprung
             {
                 int code = m.WParam.ToInt32();
                 IntPtr handle = m.LParam;
-                HandleDestroyedWindowEvent(code, handle);
+
+                if (code == HSHELL_WINDOWCREATED)
+                {
+                    HandleCreatedWindowEvent(handle);
+                }
+                else if (code == HSHELL_WINDOWDESTROYED)
+                {
+                    HandleDestroyedWindowEvent(handle);
+                }
             }
 
             if (m.Msg == WM_HOTKEY)
@@ -177,12 +194,25 @@ namespace Sprung
             base.WndProc(ref m);
         }
 
-        private void HandleDestroyedWindowEvent(int shellHookEventCode, IntPtr handle)
+        private void HandleActivatedWindowEvent(IntPtr hWinEventHook, uint eventType, IntPtr hwnd, int idObject, int idChild, uint dwEventThread, uint dwmsEventTime)
         {
-            if (shellHookEventCode != HSHELL_WINDOWDESTROYED)
+            Window window = null;
+            
+            if (windowManager.Windows.TryGetValue(hwnd, out window))
             {
-                return;
+                window.LastActivation = DateTime.Now;
             }
+        }
+
+        private void HandleCreatedWindowEvent(IntPtr handle)
+        {
+            Window window = new Window(handle);
+            windowManager.Windows.TryAdd(window.Handle, window);
+        }
+
+        private void HandleDestroyedWindowEvent(IntPtr handle)
+        {
+            windowManager.Windows.TryRemove(handle);
 
             IntPtr closedWindowHandle = handle;
 
@@ -244,17 +274,20 @@ namespace Sprung
 
             if (shortcutCode == HOTKEY_LIST_WINDOWS)
             {
-                this.cachedWindows = windowManager.GetWindows();
+                // this.cachedWindows = windowManager.GetWindows();
+                this.cachedWindows = windowManager.Windows.Values().ToList();
             }
             else if (shortcutCode == HOTKEY_LIST_WINDOWS_WITH_TABS)
             {
-                this.cachedWindows = windowManager.GetWindowsWithTabs();
+                // this.cachedWindows = windowManager.GetWindowsWithTabs();
+                this.cachedWindows = windowManager.Windows.Values().ToList();
             }
             else
             {
                 Debug.WriteLine("Unknown key combination, should never happend");
             }
 
+            this.cachedWindows.Sort(windowLastUsageComparer);
             ShowProcesses(this.cachedWindows);
             lastUsedWindow = this.cachedWindows.FirstOrDefault();
         }
@@ -408,5 +441,8 @@ namespace Sprung
 
         [DllImport("user32.dll", CharSet = CharSet.Auto, ExactSpelling = true)]
         public static extern IntPtr GetForegroundWindow();
+
+        [DllImport("user32.dll")]
+        static extern IntPtr SetWinEventHook(uint eventMin, uint eventMax, IntPtr hmodWinEventProc, WinEventDelegate lpfnWinEventProc, uint idProcess, uint idThread, uint dwFlags);
     }
 }
