@@ -16,7 +16,7 @@ using Sprung.Windows;
 
 namespace Sprung
 {
-    public partial class Sprung : Form
+    public partial class SprungForm : Form
     {
         const int MOD_ALT = 0x0001;
         const int MOD_CONTROL = 0x0002;
@@ -49,7 +49,7 @@ namespace Sprung
         WinEventDelegate handleActivatedWindowEventDelegate = null;
         delegate void WinEventDelegate(IntPtr hWinEventHook, uint eventType, IntPtr hwnd, int idObject, int idChild, uint dwEventThread, uint dwmsEventTime);
 
-        public Sprung()
+        public SprungForm()
         {
             InitializeComponent();
             this.settings = new Settings();
@@ -59,14 +59,18 @@ namespace Sprung
             this.Visible = false;
             this.Opacity = 0;
             this.ControlBox = false;
+            this.FormBorderStyle = FormBorderStyle.None;
             this.ShowInTaskbar = false;
-            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
             this.mainWindow = new Window(Handle);
             this.Deactivate += DeactivateCallback;
             this.KeyPreview = true;
             this.KeyDown += GlobalKeyDown;
             this.windowListBox.Sprung = this;
             this.windowLastUsageComparer = new WindowLastUsageComparer();
+            this.searchBox.TextChanged += new System.EventHandler(this.InputChangedCallback);
+            this.searchBox.KeyDown += new System.Windows.Forms.KeyEventHandler(this.SearchBoxKeyDown);
+            this.searchBox.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.SearchBoxKeyPress);
+
             closedWindowHandles = new ConcurrentDictionary<IntPtr, bool>();
 
             windowMessageNotifyShellHook = RegisterWindowMessage("SHELLHOOK");

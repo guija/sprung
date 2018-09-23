@@ -8,14 +8,15 @@ namespace Sprung.Windows
     {
         private const int newItemHeight = 36;
         private int iconMargin = 0;
-        private const string DefaultFontName = "Arial";
+        private const string DefaultFontName = "Microsoft Sans Serif";
         private Font titleFont = new Font(DefaultFontName, 10.0f, FontStyle.Regular);
         private Font processFont = new Font(DefaultFontName, 9.0f, FontStyle.Regular);
         private TextFormatFlags titleFlags = TextFormatFlags.Left | TextFormatFlags.Bottom;
         private TextFormatFlags processFlags = TextFormatFlags.Left | TextFormatFlags.Top;
         private Color processColor = Color.FromArgb(110, 110, 110);
+        private Color selectedBackgroundColor = Color.FromArgb(20, 20, 20);
 
-        public Sprung Sprung { get; set; }
+        public SprungForm Sprung { get; set; }
 
         public WindowListBox()
         {
@@ -42,7 +43,20 @@ namespace Sprung.Windows
             {
                 return;
             }
-            
+
+            bool isSelected = (e.State & DrawItemState.Selected) == DrawItemState.Selected;
+
+            if (isSelected)
+            {
+                e = new DrawItemEventArgs(e.Graphics,
+                    e.Font,
+                    e.Bounds,
+                    e.Index,
+                    e.State ^ DrawItemState.Selected,
+                    e.ForeColor,
+                    selectedBackgroundColor);
+            }
+
             this.ItemHeight = newItemHeight;
             Window window = Items[e.Index] as Window;
 

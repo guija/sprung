@@ -15,7 +15,7 @@ namespace Sprung
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new Sprung());
+            Application.Run(new SprungForm());
         }
     }
 }
