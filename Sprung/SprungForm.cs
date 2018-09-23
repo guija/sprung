@@ -13,11 +13,14 @@ using Nancy.Hosting.Self;
 using System.Collections.Concurrent;
 using MethodTimer;
 using Sprung.Windows;
+using System.Text.RegularExpressions;
 
 namespace Sprung
 {
     public partial class SprungForm : Form
     {
+        static Regex RegExWholeWord = new Regex(@"(\r\n|[^A-Za-z0-9_\r\n]+?|\w+?) *$", RegexOptions.Compiled);
+
         const int MOD_ALT = 0x0001;
         const int MOD_CONTROL = 0x0002;
         const int MOD_SHIFT = 0x0004;
@@ -327,6 +330,19 @@ namespace Sprung
         {
             if (e.KeyChar == (char) Keys.Enter || e.KeyChar == (char) Keys.Escape)
             {
+                e.Handled = true;
+            }
+            else if (e.KeyChar == 127)
+            {
+                // CTRL + Backspace
+                var m = RegExWholeWord.Match(searchBox.Text, 0, searchBox.SelectionStart);
+
+                if (m.Success)
+                {
+                    searchBox.Text = searchBox.Text.Remove(m.Index, m.Length);
+                    searchBox.SelectionStart = m.Index;
+                }
+
                 e.Handled = true;
             }
         }
