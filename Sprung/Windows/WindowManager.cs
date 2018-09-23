@@ -20,7 +20,7 @@ namespace Sprung.Windows
 
         private List<Window> _windows = new List<Window>();
 
-        public ConcurrentMap<IntPtr, Window> Windows = new ConcurrentMap<IntPtr, Window>();
+        public ConcurrentDictionary<IntPtr, Window> Windows = new ConcurrentDictionary<IntPtr, Window>();
 
         private static WindowManager instance = null;
         
@@ -48,8 +48,7 @@ namespace Sprung.Windows
         
         public void UpdateTitles()
         {
-            var windows = Windows.Values();
-            foreach (var window in windows)
+            foreach (var window in Windows.Values)
             {
                 window.UpdateTitle();
             }

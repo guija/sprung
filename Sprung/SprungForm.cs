@@ -233,7 +233,8 @@ namespace Sprung
 
         private void HandleDestroyedWindowEvent(IntPtr handle)
         {
-            windowManager.Windows.TryRemove(handle);
+            Window closedWindow = null;
+            windowManager.Windows.TryRemove(handle, out closedWindow);
 
             IntPtr closedWindowHandle = handle;
 
@@ -296,12 +297,12 @@ namespace Sprung
             if (shortcutCode == HOTKEY_LIST_WINDOWS)
             {
                 // this.cachedWindows = windowManager.GetWindows();
-                this.cachedWindows = windowManager.Windows.Values().ToList();
+                this.cachedWindows = windowManager.Windows.Values.ToList();
             }
             else if (shortcutCode == HOTKEY_LIST_WINDOWS_WITH_TABS)
             {
                 // this.cachedWindows = windowManager.GetWindowsWithTabs();
-                this.cachedWindows = windowManager.Windows.Values().ToList();
+                this.cachedWindows = windowManager.Windows.Values.ToList();
             }
             else
             {
