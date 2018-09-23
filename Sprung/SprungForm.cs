@@ -83,7 +83,18 @@ namespace Sprung
             IntPtr m_hhook = SetWinEventHook(EVENT_SYSTEM_FOREGROUND, EVENT_SYSTEM_FOREGROUND, IntPtr.Zero, handleActivatedWindowEventDelegate, 0, 0, WINEVENT_OUTOFCONTEXT);
         }
 
-        
+        // Hide from ALT-TAB (is not hidden when border is border less)
+        protected override CreateParams CreateParams
+        {
+            get
+            {
+                // Turn on WS_EX_TOOLWINDOW style bit
+                CreateParams cp = base.CreateParams;
+                cp.ExStyle |= 0x80;
+                return cp;
+            }
+        }
+
         private void StartTabService()
         {
             Debug.WriteLine("StartTabService");
@@ -157,6 +168,7 @@ namespace Sprung
         private void InputChangedCallback(object sender, EventArgs e)
         {
             String pattern = searchBox.Text;
+            windowManager.UpdateTitles();
             ShowProcesses(windowMatcher.match(pattern, cachedWindows));
         }
 

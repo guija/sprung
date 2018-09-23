@@ -46,6 +46,15 @@ namespace Sprung.Windows
 
         public object TabsLock { get; set; } = new object();
         
+        public void UpdateTitles()
+        {
+            var windows = Windows.Values();
+            foreach (var window in windows)
+            {
+                window.UpdateTitle();
+            }
+        }
+
         private List<Window> GetWindowsWithTabs()
         {
             lock (TabsLock)

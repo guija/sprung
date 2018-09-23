@@ -50,14 +50,15 @@ namespace Sprung.Windows
                 throw new Exception("Invalid arguments passed to constructor in class \"Process\"");
             }
 
-            // Initialization
             this.Handle = handle;
             int processId = GetWindowProcessId(handle.ToInt32());
-
             this.Process = Process.GetProcessById(processId);
             this.ProcessName = this.Process.ProcessName;
+            UpdateTitle();
+        }
 
-            // Get window title
+        public virtual void UpdateTitle()
+        {
             StringBuilder stringBuilderTitle = new StringBuilder(WINDOW_TITLE_MAX_CHARS);
             stringBuilderTitle.Length = _GetWindowText(this.Handle, stringBuilderTitle, stringBuilderTitle.Capacity + 1);
             this.Title = stringBuilderTitle.ToString();
@@ -65,7 +66,7 @@ namespace Sprung.Windows
             TitleRaw = this.Title;
 
             // Add process name to title if it is not in the window name yet
-            if(!this.Title.ToLower().Contains(this.ProcessName.ToLower()))
+            if (!this.Title.ToLower().Contains(this.ProcessName.ToLower()))
             {
                 this.Title += String.Format(" - {0}", this.ProcessName);
             }
