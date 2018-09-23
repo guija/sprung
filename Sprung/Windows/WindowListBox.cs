@@ -18,6 +18,41 @@ namespace Sprung.Windows
 
         public SprungForm Sprung { get; set; }
 
+        private bool _showScrollBar;
+
+        protected override System.Windows.Forms.CreateParams CreateParams
+        {
+            get
+            {
+                CreateParams cp = base.CreateParams;
+                if (!_showScrollBar)
+                {
+                    cp.Style = cp.Style & ~0x200000;
+                }
+                return cp;
+            }
+        }
+
+        public bool ShowScrollbar
+        {
+            get {
+                return _showScrollBar;
+            }
+
+            set
+            {
+                if (value != _showScrollBar)
+                {
+                    _showScrollBar = value;
+
+                    if (IsHandleCreated)
+                    {
+                        RecreateHandle();
+                    }
+                }
+            }
+        }
+
         public WindowListBox()
         {
             this.DrawMode = DrawMode.OwnerDrawVariable;

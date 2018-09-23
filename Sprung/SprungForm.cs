@@ -69,6 +69,7 @@ namespace Sprung
             this.KeyPreview = true;
             this.KeyDown += GlobalKeyDown;
             this.windowListBox.Sprung = this;
+            this.windowListBox.ShowScrollbar = false;
             this.windowLastUsageComparer = new WindowLastUsageComparer();
             this.searchBox.TextChanged += new System.EventHandler(this.InputChangedCallback);
             this.searchBox.KeyDown += new System.Windows.Forms.KeyEventHandler(this.SearchBoxKeyDown);
