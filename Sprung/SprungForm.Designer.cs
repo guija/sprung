@@ -45,9 +45,10 @@ namespace Sprung
             this.windowListBox.ForeColor = System.Drawing.Color.Gainsboro;
             this.windowListBox.FormattingEnabled = true;
             this.windowListBox.ItemHeight = 36;
-            this.windowListBox.Location = new System.Drawing.Point(13, 57);
+            this.windowListBox.Location = new System.Drawing.Point(12, 55);
             this.windowListBox.Name = "windowListBox";
-            this.windowListBox.Size = new System.Drawing.Size(571, 224);
+            this.windowListBox.ShowScrollbar = false;
+            this.windowListBox.Size = new System.Drawing.Size(571, 223);
             this.windowListBox.Sprung = null;
             this.windowListBox.TabIndex = 2;
             // 
@@ -55,11 +56,11 @@ namespace Sprung
             // 
             this.panel1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(20)))), ((int)(((byte)(20)))), ((int)(((byte)(20)))));
             this.panel1.Controls.Add(this.searchBox);
-            this.panel1.Location = new System.Drawing.Point(13, 12);
+            this.panel1.Location = new System.Drawing.Point(0, 0);
             this.panel1.Margin = new System.Windows.Forms.Padding(3, 3, 3, 8);
             this.panel1.Name = "panel1";
-            this.panel1.Padding = new System.Windows.Forms.Padding(8, 6, 8, 6);
-            this.panel1.Size = new System.Drawing.Size(571, 34);
+            this.panel1.Padding = new System.Windows.Forms.Padding(55, 13, 12, 6);
+            this.panel1.Size = new System.Drawing.Size(595, 43);
             this.panel1.TabIndex = 3;
             // 
             // searchBox
@@ -69,9 +70,9 @@ namespace Sprung
             this.searchBox.Dock = System.Windows.Forms.DockStyle.Fill;
             this.searchBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.searchBox.ForeColor = System.Drawing.Color.White;
-            this.searchBox.Location = new System.Drawing.Point(8, 6);
+            this.searchBox.Location = new System.Drawing.Point(55, 13);
             this.searchBox.Name = "searchBox";
-            this.searchBox.Size = new System.Drawing.Size(555, 22);
+            this.searchBox.Size = new System.Drawing.Size(528, 22);
             this.searchBox.TabIndex = 0;
             // 
             // SprungForm
