@@ -228,6 +228,12 @@ namespace Sprung
         private void HandleCreatedWindowEvent(IntPtr handle)
         {
             Window window = new Window(handle);
+
+            if (windowManager.IsWindowToBeExcluded(window))
+            {
+                return;
+            }
+
             windowManager.Windows.TryAdd(window.Handle, window);
         }
 

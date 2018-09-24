@@ -125,16 +125,22 @@ namespace Sprung.Windows
             return filteredList;
         }
 
+        public bool IsWindowToBeExcluded(Window window)
+        {
+            return settings.IsWindowTitleExcluded(window.Title) || window.TitleRaw.Trim() == string.Empty;
+        }
+
         private bool EnumWindowsProc(IntPtr hWnd, int lParam)
         {
-            if (IsWindowVisible(hWnd)) {
+            if (!IsWindowVisible(hWnd)) {
+                return true;
+            }
 
-                Window window = new Window(hWnd);
+            Window window = new Window(hWnd);
 
-                if (!settings.IsWindowTitleExcluded(window.Title) && window.TitleRaw != string.Empty)
-                {
-                    _windows.Add(window);
-                }
+            if (!IsWindowToBeExcluded(window))
+            {
+                _windows.Add(window);
             }
 
             return true;

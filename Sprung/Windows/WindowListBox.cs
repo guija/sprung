@@ -14,7 +14,8 @@ namespace Sprung.Windows
         private TextFormatFlags titleFlags = TextFormatFlags.Left | TextFormatFlags.Bottom;
         private TextFormatFlags processFlags = TextFormatFlags.Left | TextFormatFlags.Top;
         private Color processColor = Color.FromArgb(110, 110, 110);
-        private Color selectedBackgroundColor = Color.FromArgb(20, 20, 20);
+        // private Color selectedBackgroundColor = Color.FromArgb(20, 20, 20);
+        private Color selectedBackgroundColor = Color.FromArgb(0, 64, 128);
 
         public SprungForm Sprung { get; set; }
 
