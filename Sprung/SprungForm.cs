@@ -328,21 +328,25 @@ namespace Sprung
                 HideBox();
                 SendSelectedWindowToFront();
             } 
-            else if (e.KeyCode == Keys.Down && this.windowListBox.SelectedIndex < (this.windowListBox.Items.Count - 1))
+            else if (e.KeyCode == Keys.Down)
             {
-                this.windowListBox.SelectedIndex++;
-            }
-            else if (e.KeyCode == Keys.Up && this.windowListBox.Items.Count > 0 && this.windowListBox.SelectedIndex > 0)
-            {
-                this.windowListBox.SelectedIndex--;
-            }
-            else if (e.KeyCode == Keys.Delete)
-            {
-                CloseSelectedWindow();
-
-                // Mark the event as handled, otherwise the search input
-                // will be modified and the list will be reloaded
+                if (this.windowListBox.SelectedIndex < (this.windowListBox.Items.Count - 1))
+                {
+                    this.windowListBox.SelectedIndex++;
+                }
+                
                 e.Handled = true;
+                e.SuppressKeyPress = true;
+            }
+            else if (e.KeyCode == Keys.Up)
+            {
+                if (this.windowListBox.Items.Count > 0 && this.windowListBox.SelectedIndex > 0)
+                {
+                    this.windowListBox.SelectedIndex--;
+                }
+                
+                e.Handled = true;
+                e.SuppressKeyPress = true;
             }
         }
 
@@ -365,6 +369,14 @@ namespace Sprung
 
                 e.Handled = true;
             }
+            else if (e.KeyChar == 4 || e.KeyChar == 23)
+            {
+                // CTRL-D or CTRL-W closes window
+                CloseSelectedWindow();
+                e.Handled = true;
+            }
+
+            Console.WriteLine((int)e.KeyChar);
         }
 
         private void HideBox()
