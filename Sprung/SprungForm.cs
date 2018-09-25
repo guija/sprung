@@ -170,9 +170,9 @@ namespace Sprung
         {
             String pattern = searchBox.Text;
             windowManager.UpdateTitles();
+            cachedWindows = windowManager.Windows.Values.Where(w => !windowManager.IsWindowToBeExcluded(w)).ToList();
             ShowProcesses(windowMatcher.match(pattern, cachedWindows));
         }
-
         
         private void ShowProcesses(List<Window> windows)
         {
