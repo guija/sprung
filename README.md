@@ -28,7 +28,7 @@ To enable Sprung to run on every startup:
 
 ## Demo
 Here is a simple demo of how Sprung works:  
-![alt Sprung Windows Switcher Demo](http://sprung.netzauftrag.com/demos/SprungDemoShort.gif)
+![alt Sprung Windows Switcher Demo](img/SprungDemoShort.gif)
 
 ## Shortcuts
 There are two shortcuts:
